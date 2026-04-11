@@ -8,14 +8,14 @@ Built as a single, self-contained HTML file - no installation, no server, no acc
 
 ## What it does
 
-- **Policy management** — add and organise policies across Medical, Travel, Investment / Life, Property, Critical Illness, Motor, Personal Accident, and Domestic Helper categories
-- **Document upload** — attach your policy PDFs; the AI reads them and pre-fills policy details automatically
-- **AI assistant** — ask natural language questions about your coverage across all policies, with the AI reading your actual documents for precise answers
-- **Renewal tracking** — visual expiry warnings, a quick-update flow, and support for uploading renewal notices with AI-assisted extraction
-- **Lapsed policy archiving** — expired policies are visually distinguished and retained for reference without cluttering active policies
-- **Local-first storage** — all data and documents are stored in your browser's IndexedDB, never sent to any server
+- **Policy management** - add and organise policies across Medical, Travel, Investment / Life, Property, Critical Illness, Motor, Personal Accident, and Domestic Helper categories
+- **Document upload** - attach your policy PDFs; the AI reads them and pre-fills policy details automatically
+- **AI assistant** - ask natural language questions about your coverage across all policies, with the AI reading your actual documents for precise answers
+- **Renewal tracking** - visual expiry warnings, a quick-update flow, and support for uploading renewal notices with AI-assisted extraction
+- **Lapsed policy archiving** - expired policies are visually distinguished and retained for reference without cluttering active policies
+- **Local-first storage** - all data and documents are stored in your browser's IndexedDB, never sent to any server
 - **PIN lock** — optional 4-digit PIN to protect access on shared devices
-- **Backup and restore** — export your entire vault (policies + documents) as a single file; reimport on any browser or device
+- **Backup and restore** - export your entire vault (policies + documents) as a single file; reimport on any browser or device
 
 ---
 
