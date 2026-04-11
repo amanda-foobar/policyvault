@@ -1,0 +1,2819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PolicyVault — Your Insurance Intelligence Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #f5f2ec;
+    --navy-mid: #ffffff;
+    --navy-light: #ede9e1;
+    --navy-border: #d6cfc3;
+    --gold: #2d6a4f;
+    --gold-light: #1a4a36;
+    --gold-dim: #4a7c59;
+    --cream: #1a3a2a;
+    --cream-dim: #5a6e62;
+    --white: #ffffff;
+    --red: #c0392b;
+    --green: #2d6a4f;
+    --blue-accent: #2d6a4f;
+    --medical: #c0392b;
+    --travel: #1a6b8a;
+    --life: #2d6a4f;
+    --property: #b5520a;
+    --ci: #6b3fa0;
+    --life-pure: #0d7d6e;
+    --motor: #8a6200;
+    --pa: #1a5a7a;
+    --domestic: #a0365a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--cream);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 20%, rgba(45,106,79,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(181,82,10,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 36px;
+    border-bottom: 1px solid var(--navy-border);
+    background: rgba(245,242,236,0.92);
+    backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 100;
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .logo-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--gold), #1a4a36);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .logo-text { font-family: 'Lora', serif; font-size: 22px; font-weight: 700; color: var(--cream); }
+  .logo-sub { font-size: 11px; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
+
+  .header-actions { display: flex; gap: 12px; align-items: center; }
+  .btn {
+    padding: 9px 20px; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500; cursor: pointer; border: none;
+    transition: all 0.2s ease;
+  }
+  .btn-ghost {
+    background: transparent; color: var(--cream-dim); border: 1px solid var(--navy-border);
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--cream); }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), #1a4a36);
+    color: #ffffff; font-weight: 600;
+  }
+  .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(45,106,79,0.3); }
+
+  /* Main layout */
+  .main { display: flex; flex: 1; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 240px; min-height: calc(100vh - 73px);
+    border-right: 1px solid var(--navy-border);
+    padding: 28px 0;
+    flex-shrink: 0;
+    background: var(--navy-mid);
+  }
+
+  .sidebar-section { padding: 0 20px 24px; }
+  .sidebar-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #7a8c80; margin-bottom: 8px; padding: 0 4px;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 8px; cursor: pointer;
+    font-size: 14px; font-weight: 400; color: var(--cream-dim);
+    transition: all 0.15s ease; margin-bottom: 2px;
+  }
+  .nav-item:hover { background: var(--navy-light); color: var(--cream); }
+  .nav-item.active { background: rgba(45,106,79,0.1); color: var(--gold); font-weight: 500; }
+  .nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Policy count badge */
+  .nav-badge {
+    margin-left: auto; background: var(--navy-light); color: var(--cream-dim);
+    font-size: 11px; padding: 1px 7px; border-radius: 10px;
+  }
+
+  /* Main content area */
+  .content { flex: 1; padding: 36px; overflow-y: auto; }
+
+  /* Section headers */
+  .section-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .section-title { font-family: 'Lora', serif; font-size: 28px; font-weight: 600; color: var(--cream); }
+  .section-sub { font-size: 14px; color: var(--cream-dim); margin-top: 4px; }
+
+  /* Stats row */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+  .stat-card {
+    background: var(--navy-mid); border: 1px solid var(--navy-border);
+    border-radius: 14px; padding: 20px 22px;
+    transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: var(--navy-light); }
+  .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cream-dim); margin-bottom: 8px; }
+  .stat-value { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: var(--cream); }
+  .stat-sub { font-size: 12px; color: var(--cream-dim); margin-top: 4px; }
+  .stat-accent { color: var(--gold); }
+
+  /* Policy grid */
+  .policy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+
+  .policy-card {
+    background: var(--navy-mid); border: 1px solid var(--navy-border);
+    border-radius: 16px; padding: 24px;
+    cursor: pointer; transition: all 0.2s ease;
+    position: relative; overflow: hidden;
+  }
+  .policy-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 3px; border-radius: 16px 16px 0 0;
+    background: var(--card-color, var(--gold));
+  }
+  .policy-card:hover { border-color: var(--navy-light); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+
+  .card-type-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--card-color, var(--gold));
+    margin-bottom: 12px;
+  }
+  .card-type-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--card-color, var(--gold)); }
+
+  .card-name { font-family: 'Lora', serif; font-size: 18px; font-weight: 600; color: var(--cream); margin-bottom: 4px; }
+  .card-provider { font-size: 13px; color: var(--cream-dim); margin-bottom: 16px; }
+
+  .card-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .meta-item { min-width: 0; }
+  .meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #7a8c80; margin-bottom: 3px; }
+  .meta-value { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--cream); }
+
+  .card-actions {
+    display: flex; gap: 8px; margin-top: 18px; padding-top: 16px;
+    border-top: 1px solid var(--navy-border);
+  }
+  .card-btn {
+    flex: 1; padding: 7px; border-radius: 7px; font-size: 12px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--navy-border);
+    background: transparent; color: var(--cream-dim); transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .card-btn:hover { background: var(--navy-light); color: var(--cream); border-color: var(--navy-light); }
+  .card-btn.danger:hover { border-color: var(--red); color: var(--red); }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center; padding: 80px 40px;
+    background: var(--navy-mid); border: 1px dashed var(--navy-border);
+    border-radius: 20px;
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+  .empty-title { font-family: 'Lora', serif; font-size: 22px; color: var(--cream); margin-bottom: 8px; }
+  .empty-sub { font-size: 14px; color: var(--cream-dim); max-width: 360px; margin: 0 auto 24px; line-height: 1.6; }
+
+  /* AI Chat */
+  .chat-section {
+    background: var(--navy-mid); border: 1px solid var(--navy-border);
+    border-radius: 20px; overflow: hidden; margin-bottom: 32px;
+  }
+  .chat-header {
+    padding: 18px 24px; border-bottom: 1px solid var(--navy-border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .chat-ai-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--gold), #1a4a36);
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+  .chat-title { font-size: 15px; font-weight: 600; color: var(--cream); }
+  .chat-status { font-size: 12px; color: var(--green); display: flex; align-items: center; gap: 5px; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .chat-messages {
+    padding: 20px 24px; min-height: 200px; max-height: 400px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .message { display: flex; gap: 12px; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .msg-avatar {
+    width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0; margin-top: 2px;
+    display: flex; align-items: center; justify-content: center; font-size: 13px;
+  }
+  .msg-avatar.ai { background: linear-gradient(135deg, var(--gold), #1a4a36); }
+  .msg-avatar.user { background: #d6cfc3; color: var(--cream-dim); }
+
+  .msg-bubble {
+    padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.6; max-width: 85%;
+  }
+  .message.ai .msg-bubble { background: #ede9e1; color: var(--cream); border-radius: 4px 12px 12px 12px; border: 1px solid var(--navy-border); }
+  .message.user { flex-direction: row-reverse; }
+  .message.user .msg-bubble { background: rgba(45,106,79,0.08); color: var(--cream); border: 1px solid rgba(45,106,79,0.2); border-radius: 12px 4px 12px 12px; }
+
+  .chat-input-area {
+    padding: 16px 24px; border-top: 1px solid var(--navy-border);
+    display: flex; gap: 10px; align-items: flex-end;
+  }
+  .chat-input {
+    flex: 1; background: #f5f1ea; border: 1px solid var(--navy-border);
+    border-radius: 10px; padding: 11px 14px; color: var(--cream);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; resize: none;
+    min-height: 44px; max-height: 120px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .chat-input:focus { border-color: var(--gold); }
+  .chat-input::placeholder { color: #7a8c80; }
+  .chat-send {
+    width: 44px; height: 44px; border-radius: 10px; cursor: pointer; border: none;
+    background: linear-gradient(135deg, var(--gold), #1a4a36);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; flex-shrink: 0; color: #ffffff;
+  }
+  .chat-send svg { display: block; }
+  .chat-send:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(45,106,79,0.3); }
+  .chat-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 500; display: flex; align-items: center; justify-content: center;
+    padding: 20px; backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-backdrop.hidden { display: none; }
+
+  .modal {
+    background: var(--navy-mid); border: 1px solid var(--navy-border);
+    border-radius: 20px; width: 100%; max-width: 560px;
+    max-height: 90vh; overflow: hidden;
+    display: flex; flex-direction: column;
+    animation: slideUp 0.3s ease;
+  }
+  .modal-body {
+    padding: 24px 28px; overflow-y: auto; flex: 1;
+  }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .modal-header {
+    padding: 24px 28px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--navy-border);
+    flex-shrink: 0;
+  }
+  .modal-title { font-family: 'Lora', serif; font-size: 22px; color: var(--cream); }
+  .modal-close {
+    width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--navy-border);
+    background: transparent; color: var(--cream-dim); cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+  }
+  .modal-close:hover { background: var(--navy-light); color: var(--cream); }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #64748b; margin-bottom: 6px; display: block; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%; background: #f5f1ea; border: 1px solid var(--navy-border);
+    border-radius: 9px; padding: 10px 14px; color: var(--cream);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
+  .form-textarea { resize: vertical; min-height: 100px; }
+  .form-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%232d6a4f' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; background-color: #f5f1ea; }
+  .form-select option { background: #ffffff; color: var(--cream); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .modal-footer {
+    padding: 16px 28px 24px;
+    display: flex; gap: 10px; justify-content: flex-end;
+    border-top: 1px solid var(--navy-border);
+    flex-shrink: 0;
+  }
+
+  /* Suggestion chips */
+  .suggestion-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 24px 16px; }
+  .chip {
+    padding: 6px 12px; border-radius: 20px; font-size: 12px;
+    border: 1px solid var(--navy-border); color: var(--cream-dim);
+    cursor: pointer; transition: all 0.15s; background: transparent;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .chip:hover { border-color: var(--gold); color: var(--gold); background: rgba(45,106,79,0.05); }
+
+  /* Renewal warning */
+  .renewal-warning {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--red); background: rgba(224,82,82,0.1);
+    padding: 3px 8px; border-radius: 4px; margin-left: 8px;
+  }
+
+  /* Lapsed card state */
+  .policy-card.lapsed {
+    background: #f7f4ee;
+    border-color: #d6cfc3;
+    opacity: 0.82;
+  }
+  .policy-card.lapsed::before {
+    background: #7a8c80 !important;
+  }
+  .policy-card.lapsed:hover {
+    opacity: 1;
+    border-color: #c4bcb0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  }
+  .policy-card.lapsed .card-name { color: #64748b; }
+  .policy-card.lapsed .card-provider { color: #7a8c80; }
+  .policy-card.lapsed .card-type-badge { color: #7a8c80 !important; }
+  .policy-card.lapsed .card-type-dot { background: #7a8c80 !important; }
+  .policy-card.lapsed .meta-value { color: #7a8c80; }
+  .lapsed-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 600; color: #64748b;
+    background: #ede9e1; border: 1px solid #c4bcb0;
+    padding: 3px 8px; border-radius: 4px; margin-left: 8px;
+    letter-spacing: 0.04em;
+  }
+  .lapsed-banner {
+    display: flex; align-items: center; gap: 10px;
+    background: #f5f1ea; border: 1px solid #d6cfc3;
+    border-radius: 10px; padding: 12px 16px; margin-bottom: 20px;
+  }
+  .lapsed-banner-icon { font-size: 20px; flex-shrink: 0; }
+  .lapsed-banner-text { font-size: 13px; color: #64748b; line-height: 1.5; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #c4bcb0; border-radius: 3px; }
+
+  /* View detail modal extras */
+  .detail-section { margin-bottom: 20px; }
+  .detail-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #7a8c80; margin-bottom: 10px; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .detail-item { }
+  .detail-label { font-size: 11px; color: var(--cream-dim); margin-bottom: 3px; }
+  .detail-value { font-size: 14px; color: var(--cream); font-family: 'DM Mono', monospace; }
+  .detail-notes { font-size: 13px; color: var(--cream-dim); line-height: 1.7; background: #f5f1ea; border: 1px solid var(--navy-border); border-radius: 8px; padding: 12px 14px; }
+
+  /* Loading dots */
+  .loading-dots span { display: inline-block; animation: blink 1.4s infinite; }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,80%,100% { opacity: 0; } 40% { opacity: 1; } }
+
+  .thinking { color: var(--cream-dim); font-style: italic; }
+
+  /* Upload zone */
+  .upload-zone {
+    border: 2px dashed var(--navy-border); border-radius: 12px;
+    padding: 24px 20px; text-align: center; cursor: pointer;
+    transition: all 0.2s ease; background: #f5f1ea; margin-bottom: 18px;
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--gold); background: rgba(45,106,79,0.04);
+  }
+  .upload-zone input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-icon { font-size: 28px; margin-bottom: 8px; }
+  .upload-title { font-size: 14px; font-weight: 600; color: var(--cream); margin-bottom: 4px; }
+  .upload-sub { font-size: 12px; color: var(--cream-dim); }
+  .upload-link { color: var(--gold); text-decoration: underline; cursor: pointer; }
+
+  /* Uploaded file pill */
+  .file-pill {
+    display: flex; align-items: center; gap: 10px;
+    background: #ede9e1; border: 1px solid var(--navy-border);
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 18px;
+  }
+  .file-pill-icon { font-size: 20px; flex-shrink: 0; }
+  .file-pill-name { font-size: 13px; font-weight: 500; color: var(--cream); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .file-pill-size { font-size: 11px; color: var(--cream-dim); flex-shrink: 0; }
+  .file-pill-remove { background: none; border: none; cursor: pointer; color: var(--cream-dim); font-size: 16px; padding: 0 2px; transition: color 0.15s; }
+  .file-pill-remove:hover { color: var(--red); }
+
+  /* Extract banner */
+  .extract-banner {
+    display: flex; align-items: center; gap: 12px;
+    background: linear-gradient(135deg, rgba(45,106,79,0.08), rgba(45,106,79,0.04));
+    border: 1px solid rgba(45,106,79,0.2); border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 18px;
+  }
+  .extract-banner-text { flex: 1; font-size: 13px; color: var(--cream); }
+  .extract-banner-sub { font-size: 11px; color: var(--cream-dim); margin-top: 2px; }
+  .btn-extract {
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    background: var(--gold); color: white; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+  }
+  .btn-extract:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-extract:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* Extraction progress */
+  .extraction-progress {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--cream-dim); padding: 4px 0;
+  }
+  .extraction-spinner {
+    width: 16px; height: 16px; border: 2px solid var(--navy-border);
+    border-top-color: var(--gold); border-radius: 50%;
+    animation: spin 0.8s linear infinite; flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Pre-fill badge on fields */
+  .prefilled { border-color: rgba(45,106,79,0.4) !important; background: rgba(45,106,79,0.04) !important; }
+  .prefill-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; color: var(--gold); background: rgba(45,106,79,0.08);
+    border: 1px solid rgba(45,106,79,0.2); border-radius: 4px;
+    padding: 1px 6px; margin-left: 6px; vertical-align: middle;
+  }
+
+  /* Divider */
+  .form-divider {
+    display: flex; align-items: center; gap: 10px; margin: 4px 0 18px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #7a8c80;
+  }
+  .form-divider::before, .form-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--navy-border);
+  }
+
+  /* Doc attachment in detail view */
+  .doc-attachment {
+    display: flex; align-items: center; gap: 12px;
+    background: #f5f1ea; border: 1px solid var(--navy-border);
+    border-radius: 10px; padding: 12px 16px;
+  }
+  .doc-attachment-icon { font-size: 24px; }
+  .doc-attachment-info { flex: 1; min-width: 0; }
+  .doc-attachment-name { font-size: 13px; font-weight: 500; color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .doc-attachment-meta { font-size: 11px; color: var(--cream-dim); margin-top: 2px; }
+  .doc-view-btn {
+    padding: 6px 14px; border-radius: 7px; font-size: 12px; font-weight: 500;
+    background: white; border: 1px solid var(--navy-border); color: var(--cream);
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap;
+  }
+  .doc-view-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* Renew modal */
+  .renew-policy-pill {
+    background: #f5f1ea; border: 1px solid var(--navy-border);
+    border-radius: 10px; padding: 12px 16px; margin-bottom: 20px;
+    font-size: 13px; color: var(--cream);
+  }
+  .renew-policy-pill strong { display: block; font-size: 15px; margin-bottom: 2px; }
+  .renew-policy-pill span { color: var(--cream-dim); font-size: 12px; }
+
+  .renew-tabs {
+    display: flex; gap: 4px; background: #ede9e1; border-radius: 10px;
+    padding: 4px; margin-bottom: 20px;
+  }
+  .renew-tab {
+    flex: 1; padding: 8px 12px; border-radius: 7px; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s; background: transparent; color: var(--cream-dim);
+  }
+  .renew-tab.active { background: white; color: var(--cream); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+  .card-btn.renew { color: var(--gold); border-color: rgba(45,106,79,0.2); }
+  .card-btn.renew:hover { background: rgba(45,106,79,0.06); border-color: var(--gold); color: var(--gold); }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .content { padding: 20px; }
+    header { padding: 16px 20px; }
+  }
+  /* ── Auth / PIN screen ───────────────────────────────────────────────────── */
+  .auth-screen {
+    position: fixed; inset: 0; z-index: 1000;
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .auth-screen.hidden { display: none; }
+
+  .auth-card {
+    background: var(--navy-mid); border: 1px solid var(--navy-border);
+    border-radius: 24px; width: 100%; max-width: 420px;
+    padding: 48px 40px;
+    box-shadow: 0 20px 60px rgba(26,58,42,0.12);
+    animation: slideUp 0.35s ease;
+  }
+
+  .auth-logo {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 32px;
+  }
+  .auth-logo-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--gold), #1a4a36);
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+  }
+  .auth-logo-text { font-family: 'Lora', serif; font-size: 24px; font-weight: 700; color: var(--cream); }
+  .auth-logo-sub { font-size: 11px; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; }
+
+  .auth-title { font-family: 'Lora', serif; font-size: 22px; font-weight: 600; color: var(--cream); margin-bottom: 6px; }
+  .auth-sub { font-size: 14px; color: var(--cream-dim); line-height: 1.5; }
+  .auth-link { color: var(--gold); cursor: pointer; font-weight: 500; }
+  .auth-link:hover { text-decoration: underline; }
+  .auth-error {
+    background: rgba(192,57,43,0.08); border: 1px solid rgba(192,57,43,0.25);
+    border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #c0392b;
+    margin-bottom: 16px; display: none;
+  }
+
+  /* PIN dots */
+  .pin-dots {
+    display: flex; justify-content: center; gap: 16px; margin: 24px 0 28px;
+  }
+  .pin-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid var(--navy-border); background: transparent;
+    transition: all 0.15s ease;
+  }
+  .pin-dot.filled { background: var(--gold); border-color: var(--gold); }
+  .pin-dot.error { background: #c0392b; border-color: #c0392b; animation: shake 0.4s ease; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-6px); }
+    40%      { transform: translateX(6px); }
+    60%      { transform: translateX(-4px); }
+    80%      { transform: translateX(4px); }
+  }
+
+  /* PIN numpad */
+  .pin-pad {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    max-width: 240px; margin: 0 auto;
+  }
+  .pin-key {
+    aspect-ratio: 1; border-radius: 50%; border: 1px solid var(--navy-border);
+    background: var(--navy-mid); color: var(--cream);
+    font-family: 'DM Sans', sans-serif; font-size: 20px; font-weight: 500;
+    cursor: pointer; transition: all 0.12s; display: flex;
+    align-items: center; justify-content: center;
+  }
+  .pin-key:hover { background: var(--navy-light); border-color: var(--gold); color: var(--gold); }
+  .pin-key:active { transform: scale(0.92); }
+  .pin-key-empty { border: none; background: transparent; cursor: default; pointer-events: none; }
+  .pin-key-del { font-size: 18px; color: var(--cream-dim); }
+
+  /* User pill in header */
+  .user-pill {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 14px 6px 8px; border-radius: 20px;
+    background: var(--navy-light); border: 1px solid var(--navy-border);
+    font-size: 13px; color: var(--cream-dim); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .user-pill:hover { border-color: var(--gold); color: var(--cream); }
+  .user-avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #1a4a36);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .btn-logout {
+    padding: 6px 14px; border-radius: 8px; font-size: 13px;
+    background: transparent; border: 1px solid var(--navy-border);
+    color: var(--cream-dim); cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .btn-logout:hover { border-color: #c0392b; color: #c0392b; }
+
+  /* Profile modal */
+  .profile-avatar-large {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #1a4a36);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 700; color: white;
+    margin: 0 auto 20px; letter-spacing: 1px;
+  }
+  .profile-section-divider {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #7a8c80; margin: 20px 0 16px;
+  }
+  .profile-section-divider::before, .profile-section-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--navy-border);
+  }
+  .profile-meta {
+    background: var(--navy); border: 1px solid var(--navy-border);
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 20px;
+  }
+  .profile-meta-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; padding: 4px 0;
+  }
+  .profile-meta-row + .profile-meta-row { border-top: 1px solid var(--navy-border); margin-top: 8px; padding-top: 8px; }
+  .profile-meta-label { color: var(--cream-dim); }
+  .profile-meta-value { color: var(--cream); font-family: 'DM Mono', monospace; font-size: 12px; }
+  .profile-error { background: rgba(192,57,43,0.08); border: 1px solid rgba(192,57,43,0.25); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #c0392b; margin-bottom: 12px; display: none; }
+
+  /* Save button confirm flash */
+  @keyframes btnConfirm {
+    0%   { transform: scale(1); background: linear-gradient(135deg, var(--gold), #1a4a36); }
+    30%  { transform: scale(0.96); background: linear-gradient(135deg, #2d8a5a, #1a5c38); }
+    60%  { transform: scale(1.02); background: linear-gradient(135deg, #2d8a5a, #1a5c38); }
+    100% { transform: scale(1); background: linear-gradient(135deg, var(--gold), #1a4a36); }
+  }
+  .btn-confirm {
+    animation: btnConfirm 0.4s ease forwards;
+    pointer-events: none;
+  }
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1a3a2a; color: #fff;
+    padding: 12px 20px; border-radius: 12px;
+    font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 500;
+    box-shadow: 0 8px 24px rgba(26,58,42,0.25);
+    display: flex; align-items: center; gap: 10px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 9999; white-space: nowrap;
+  }
+  .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+  .toast.error { background: #7f1d1d; }
+</style>
+</head>
+<body>
+
+<!-- ── PIN Screen ──────────────────────────────────────────────────────────── -->
+<div class="auth-screen hidden" id="auth-pin">
+  <div class="auth-card" style="max-width:360px; text-align:center">
+    <div class="auth-logo" style="justify-content:center">
+      <div class="auth-logo-icon">🔐</div>
+      <div>
+        <div class="auth-logo-text">PolicyVault</div>
+        <div class="auth-logo-sub">Insurance Intelligence</div>
+      </div>
+    </div>
+    <div class="auth-title" style="margin-bottom:6px">Enter your PIN</div>
+    <div class="auth-sub" style="margin-bottom:20px">Enter your PIN to access your vault.</div>
+    <div class="auth-error" id="pin-error"></div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="dot-0"></div>
+      <div class="pin-dot" id="dot-1"></div>
+      <div class="pin-dot" id="dot-2"></div>
+      <div class="pin-dot" id="dot-3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-key" onclick="pinInput('1')">1</button>
+      <button class="pin-key" onclick="pinInput('2')">2</button>
+      <button class="pin-key" onclick="pinInput('3')">3</button>
+      <button class="pin-key" onclick="pinInput('4')">4</button>
+      <button class="pin-key" onclick="pinInput('5')">5</button>
+      <button class="pin-key" onclick="pinInput('6')">6</button>
+      <button class="pin-key" onclick="pinInput('7')">7</button>
+      <button class="pin-key" onclick="pinInput('8')">8</button>
+      <button class="pin-key" onclick="pinInput('9')">9</button>
+      <button class="pin-key pin-key-empty"></button>
+      <button class="pin-key" onclick="pinInput('0')">0</button>
+      <button class="pin-key pin-key-del" onclick="pinDelete()">⌫</button>
+    </div>
+    <div style="margin-top:20px">
+      <span class="auth-link" style="font-size:12px" onclick="clearPinAndEnter()">Forgot PIN? Reset and open vault</span>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="main-app" style="display:none">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🔐</div>
+      <div>
+        <div class="logo-text">PolicyVault</div>
+        <div class="logo-sub">Insurance Intelligence</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="user-pill" id="user-pill" onclick="openProfileModal()">
+        <div class="user-avatar" id="user-avatar">👤</div>
+        <span id="user-name-display">Me</span>
+      </div>
+      <button class="btn btn-ghost" onclick="showView('policies')">My Policies</button>
+      <button class="btn btn-gold" onclick="openAddModal()">+ Add Policy</button>
+      <button class="btn-logout" onclick="lockApp()" title="Lock app">🔒 Lock</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Navigation</div>
+        <div class="nav-item active" onclick="showView('dashboard')">
+          <span>📊</span> Dashboard
+        </div>
+        <div class="nav-item" onclick="showView('policies')">
+          <span>📄</span> All Policies
+          <span class="nav-badge" id="sb-count">0</span>
+        </div>
+        <div class="nav-item" onclick="showView('ai')">
+          <span>✨</span> AI Assistant
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Policy Types</div>
+        <div class="nav-item" onclick="filterByType('Critical Illness')">
+          <div class="nav-dot" style="background: var(--ci)"></div> Critical Illness
+          <span class="nav-badge" id="sb-ci">0</span>
+        </div>
+        <div class="nav-item" onclick="filterByType('Domestic Helper')">
+          <div class="nav-dot" style="background: var(--domestic)"></div> Domestic Helper
+          <span class="nav-badge" id="sb-domestic">0</span>
+        </div>
+        <div class="nav-item" onclick="filterByType('Investment / Life')">
+          <div class="nav-dot" style="background: var(--life)"></div> Investment / Life
+          <span class="nav-badge" id="sb-life">0</span>
+        </div>
+        <div class="nav-item" onclick="filterByType('Medical')">
+          <div class="nav-dot" style="background: var(--medical)"></div> Medical
+          <span class="nav-badge" id="sb-medical">0</span>
+        </div>
+        <div class="nav-item" onclick="filterByType('Motor')">
+          <div class="nav-dot" style="background: var(--motor)"></div> Motor
+          <span class="nav-badge" id="sb-motor">0</span>
+        </div>
+        <div class="nav-item" onclick="filterByType('Personal Accident')">
+          <div class="nav-dot" style="background: var(--pa)"></div> Personal Accident
+          <span class="nav-badge" id="sb-pa">0</span>
+        </div>
+        <div class="nav-item" onclick="filterByType('Property')">
+          <div class="nav-dot" style="background: var(--property)"></div> Property
+          <span class="nav-badge" id="sb-property">0</span>
+        </div>
+        <div class="nav-item" onclick="filterByType('Travel')">
+          <div class="nav-dot" style="background: var(--travel)"></div> Travel
+          <span class="nav-badge" id="sb-travel">0</span>
+        </div>
+      </div>
+      <div class="sidebar-section" style="margin-top:auto; border-top: 1px solid var(--navy-border); padding-top: 20px;">
+        <div class="sidebar-label">Your Data</div>
+        <div class="nav-item" onclick="openBackupModal()">
+          <span>📤</span> Back up data
+        </div>
+        <div class="nav-item" onclick="openRestoreModal()">
+          <span>📥</span> Restore backup
+        </div>
+        <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importVault(event)">
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+
+      <!-- Dashboard View -->
+      <div id="view-dashboard">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Dashboard</div>
+            <div class="section-sub">Overview of your insurance portfolio</div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Total Policies</div>
+            <div class="stat-value stat-accent" id="stat-total">0</div>
+            <div class="stat-sub">across all categories</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Annual Premium</div>
+            <div class="stat-value" id="stat-premium">—</div>
+            <div class="stat-sub">estimated total</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Renewing Soon</div>
+            <div class="stat-value" id="stat-renewing" style="color:var(--red)">0</div>
+            <div class="stat-sub">within 60 days</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Providers</div>
+            <div class="stat-value" id="stat-providers">0</div>
+            <div class="stat-sub">unique insurers</div>
+          </div>
+        </div>
+
+        <!-- AI Chat on dashboard -->
+        <div id="chat-section-dash" class="chat-section">
+          <div class="chat-header">
+            <div class="chat-ai-icon">✨</div>
+            <div style="flex:1">
+              <div class="chat-title">AI Policy Assistant</div>
+            </div>
+            <div id="chat-doc-indicator-dash" style="display:none;font-size:11px;color:var(--gold);background:rgba(45,106,79,0.08);border:1px solid rgba(45,106,79,0.2);border-radius:6px;padding:3px 8px;margin-right:8px">📋 Reading docs</div>
+            <div class="chat-status"><div class="status-dot"></div> Ready</div>
+          </div>
+          <div class="chat-messages" id="chat-messages-dash">
+            <div class="message ai">
+              <div class="msg-avatar ai">✨</div>
+              <div class="msg-bubble">Hello! I'm your PolicyVault AI assistant. I can answer questions about your policies — coverage details, renewal dates, what's covered, comparisons between plans, and more. Add your policies first, then ask me anything!</div>
+            </div>
+          </div>
+          <div class="suggestion-chips" id="suggestion-chips">
+            <button class="chip" onclick="sendSuggestion('What are all my policies?')">📋 What are all my policies?</button>
+            <button class="chip" onclick="sendSuggestion('Which policy covers me for hospitalisation?')">🏥 Hospitalisation coverage?</button>
+            <button class="chip" onclick="sendSuggestion('Which policies are renewing soon?')">📅 Renewing soon?</button>
+            <button class="chip" onclick="sendSuggestion('What is my total annual premium?')">💰 Total annual premium?</button>
+            <button class="chip" onclick="sendSuggestion('Am I covered for overseas travel emergencies?')">✈️ Travel emergency coverage?</button>
+          </div>
+          <div class="chat-input-area">
+            <textarea class="chat-input" id="chat-input-dash" placeholder="Ask anything about your policies…" rows="1" onkeydown="handleKey(event)"></textarea>
+            <button class="chat-send" id="chat-send-btn" onclick="sendMessage()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+          </div>
+        </div>
+
+        <!-- Recent policies -->
+        <div class="section-header">
+          <div>
+            <div class="section-title" style="font-size:20px">Your Policies</div>
+          </div>
+          <button class="btn btn-ghost" onclick="showView('policies')">View all →</button>
+        </div>
+        <div class="policy-grid" id="dashboard-policy-grid"></div>
+        <div class="empty-state" id="empty-dashboard">
+          <div class="empty-icon">🔐</div>
+          <div class="empty-title">No policies yet</div>
+          <div class="empty-sub">Add your first policy to get started. Once added, you can ask the AI anything about your coverage.</div>
+          <button class="btn btn-gold" onclick="openAddModal()">+ Add Your First Policy</button>
+        </div>
+      </div>
+
+      <!-- Policies View -->
+      <div id="view-policies" style="display:none">
+        <div class="section-header">
+          <div>
+            <div class="section-title" id="policies-view-title">All Policies</div>
+            <div class="section-sub" id="policies-view-sub">Manage your insurance portfolio</div>
+          </div>
+          <button class="btn btn-gold" onclick="openAddModal()">+ Add Policy</button>
+        </div>
+        <div class="policy-grid" id="all-policy-grid"></div>
+        <div class="empty-state" id="empty-policies">
+          <div class="empty-icon">📄</div>
+          <div class="empty-title">No policies in this category</div>
+          <div class="empty-sub">Add policies to start managing your coverage.</div>
+          <button class="btn btn-gold" onclick="openAddModal()">+ Add Policy</button>
+        </div>
+      </div>
+
+      <!-- AI View -->
+      <div id="view-ai" style="display:none">
+        <div class="section-header">
+          <div>
+            <div class="section-title">AI Policy Assistant</div>
+            <div class="section-sub">Ask anything about your coverage</div>
+          </div>
+        </div>
+        <div class="chat-section" style="margin-bottom:0">
+          <div class="chat-header">
+            <div class="chat-ai-icon">✨</div>
+            <div style="flex:1">
+              <div class="chat-title">PolicyVault Intelligence</div>
+            </div>
+            <div id="chat-doc-indicator-ai" style="display:none;font-size:11px;color:var(--gold);background:rgba(45,106,79,0.08);border:1px solid rgba(45,106,79,0.2);border-radius:6px;padding:3px 8px;margin-right:8px">📋 Reading docs</div>
+            <div class="chat-status"><div class="status-dot"></div> Active</div>
+          </div>
+          <div class="chat-messages" id="chat-messages-ai" style="max-height:520px">
+            <div class="message ai">
+              <div class="msg-avatar ai">✨</div>
+              <div class="msg-bubble">I'm ready to help you understand your insurance portfolio. Ask me about specific coverages, compare your plans, check renewal dates, or find out if you're covered for particular scenarios.</div>
+            </div>
+          </div>
+          <div class="suggestion-chips">
+            <button class="chip" onclick="sendSuggestionAI('Do I have any gaps in my coverage?')">⚠️ Coverage gaps?</button>
+            <button class="chip" onclick="sendSuggestionAI('Which policy has the highest premium?')">💰 Highest premium?</button>
+            <button class="chip" onclick="sendSuggestionAI('Summarise all my policies')">📋 Summarise all policies</button>
+          </div>
+          <div class="chat-input-area">
+            <textarea class="chat-input" id="chat-input-ai" placeholder="Ask anything…" rows="1" onkeydown="handleKeyAI(event)"></textarea>
+            <button class="chat-send" id="chat-send-ai" onclick="sendMessageAI()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-backdrop hidden" id="add-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Add Policy</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id">
+
+      <!-- Document upload -->
+      <div id="upload-zone-wrap">
+        <div class="upload-zone" id="upload-zone">
+          <input type="file" id="doc-file-input" accept=".pdf" onchange="handleFileSelect(event)">
+          <div class="upload-icon">📋</div>
+          <div class="upload-title">Upload your policy document</div>
+          <div class="upload-sub">PDF only — <span class="upload-link">click to browse</span> or drag & drop</div>
+        </div>
+      </div>
+
+      <!-- File pill (shown after upload) -->
+      <div class="file-pill" id="file-pill" style="display:none">
+        <div class="file-pill-icon" id="file-pill-icon">📄</div>
+        <div class="file-pill-name" id="file-pill-name"></div>
+        <div class="file-pill-size" id="file-pill-size"></div>
+        <button class="file-pill-remove" onclick="removeFile()" title="Remove">✕</button>
+      </div>
+
+      <!-- AI Extract banner (shown after upload) -->
+      <div class="extract-banner" id="extract-banner" style="display:none">
+        <div>
+          <div class="extract-banner-text">✨ Auto-fill from document</div>
+          <div class="extract-banner-sub">AI will read your document and pre-fill the fields below</div>
+        </div>
+        <button class="btn-extract" id="extract-btn" onclick="extractFromDocument()">Extract Info</button>
+      </div>
+
+      <!-- Extraction in progress -->
+      <div class="extraction-progress" id="extraction-progress" style="display:none">
+        <div class="extraction-spinner"></div>
+        <span>Reading your document and extracting policy details…</span>
+      </div>
+
+      <div class="form-divider">or fill in manually</div>
+
+      <div class="form-group">
+        <label class="form-label">Policy Name * <span class="prefill-badge" id="badge-name" style="display:none">✨ AI filled</span></label>
+        <input type="text" class="form-input" id="f-name" placeholder="e.g. AIA HealthShield Gold Max">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Policy Type * <span class="prefill-badge" id="badge-type" style="display:none">✨ AI filled</span></label>
+          <select class="form-select" id="f-type">
+            <option value="">Select type…</option>
+            <option value="Critical Illness">Critical Illness</option>
+            <option value="Domestic Helper">Domestic Helper</option>
+            <option value="Investment / Life">Investment / Life</option>
+            <option value="Medical">Medical / Health</option>
+            <option value="Motor">Motor</option>
+            <option value="Personal Accident">Personal Accident</option>
+            <option value="Property">Property / Home</option>
+            <option value="Travel">Travel</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Provider / Insurer * <span class="prefill-badge" id="badge-provider" style="display:none">✨ AI filled</span></label>
+          <input type="text" class="form-input" id="f-provider" placeholder="e.g. AIA, Prudential">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Policy Number <span class="prefill-badge" id="badge-number" style="display:none">✨ AI filled</span></label>
+          <input type="text" class="form-input" id="f-number" placeholder="e.g. POL-12345678">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Premium Amount (SGD) <span class="prefill-badge" id="badge-premium" style="display:none">✨ AI filled</span></label>
+          <input type="number" class="form-input" id="f-premium" placeholder="e.g. 150">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Payment Frequency <span class="prefill-badge" id="badge-frequency" style="display:none">✨ AI filled</span></label>
+          <select class="form-select" id="f-frequency">
+            <option value="yearly">Yearly</option>
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="half-yearly">Half-yearly</option>
+            <option value="single">Single Premium</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:flex;align-items:flex-end">
+          <div style="width:100%;background:#ede9e1;border:1px solid var(--navy-border);border-radius:9px;padding:10px 14px;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#7a8c80;margin-bottom:4px">Annualised Premium</div>
+            <div style="font-family:'DM Mono',monospace;font-size:14px;color:var(--cream)" id="f-annualised">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Start Date <span class="prefill-badge" id="badge-start" style="display:none">✨ AI filled</span></label>
+          <input type="date" class="form-input" id="f-start">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Renewal / Expiry Date <span class="prefill-badge" id="badge-renewal" style="display:none">✨ AI filled</span></label>
+          <input type="date" class="form-input" id="f-renewal">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sum Insured / Assured / Trip Limit <span class="prefill-badge" id="badge-limit" style="display:none">✨ AI filled</span></label>
+        <input type="text" class="form-input" id="f-limit" placeholder="e.g. S$1,000,000 lifetime / S$5,000 per trip">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Coverage Details & Notes <span class="prefill-badge" id="badge-notes" style="display:none">✨ AI filled</span></label>
+        <textarea class="form-textarea" id="f-notes" placeholder="Describe what this policy covers: e.g. hospitalisation, surgery, outpatient visits, pre-existing conditions, exclusions, deductible amounts, named beneficiaries, investment allocation, etc."></textarea>
+      </div>
+
+      <div class="form-divider">Insurance Agent (Optional)</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Agent Name</label>
+          <input type="text" class="form-input" id="f-agent-name" placeholder="e.g. Jane Tan">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Agent Contact</label>
+          <input type="text" class="form-input" id="f-agent-contact" placeholder="e.g. +65 9123 4567">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="savePolicy()">Save Policy</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-backdrop hidden" id="detail-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="detail-title">Policy Details</div>
+      <button class="modal-close" onclick="closeDetailModal()">✕</button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost danger" onclick="deleteCurrentPolicy()" style="margin-right:auto">🗑 Delete</button>
+      <button class="btn btn-ghost" onclick="closeDetailModal()">Close</button>
+      <button class="btn btn-ghost" onclick="openRenewModal(viewingPolicyId); closeDetailModal()">🔄 Renew</button>
+      <button class="btn btn-gold" onclick="editCurrentPolicy()">✏️ Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Renew Modal -->
+<div class="modal-backdrop hidden" id="renew-modal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <div class="modal-title">Renew Policy</div>
+      <button class="modal-close" onclick="closeRenewModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="renew-id">
+      <div class="renew-policy-pill" id="renew-policy-pill"></div>
+      <div class="renew-tabs">
+        <button class="renew-tab active" id="tab-quick" onclick="switchRenewTab('quick')">⚡ Quick Update</button>
+        <button class="renew-tab" id="tab-upload" onclick="switchRenewTab('upload')">📋 Upload Notice</button>
+      </div>
+      <div id="renew-panel-quick">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">New Expiry Date *</label>
+            <input type="date" class="form-input" id="renew-date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Premium (SGD)</label>
+            <input type="number" class="form-input" id="renew-premium" placeholder="Leave blank if unchanged">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Coverage Changes <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#7a8c80;font-size:11px">(optional — note any changes from the renewal notice)</span></label>
+          <textarea class="form-textarea" id="renew-notes" placeholder="e.g. Deductible increased from S$3,000 to S$3,500. Room & board limit unchanged." style="min-height:80px"></textarea>
+        </div>
+      </div>
+      <div id="renew-panel-upload" style="display:none">
+        <div class="upload-zone" id="renew-upload-zone">
+          <input type="file" id="renew-file-input" accept=".pdf" onchange="handleRenewFileSelect(event)">
+          <div class="upload-icon">📋</div>
+          <div class="upload-title">Upload renewal notice</div>
+          <div class="upload-sub">PDF only — <span class="upload-link">click to browse</span> or drag & drop</div>
+        </div>
+        <div class="file-pill" id="renew-file-pill" style="display:none">
+          <div class="file-pill-icon">📋</div>
+          <div class="file-pill-name" id="renew-file-name"></div>
+          <div class="file-pill-size" id="renew-file-size"></div>
+          <button class="file-pill-remove" onclick="removeRenewFile()">✕</button>
+        </div>
+        <div class="extract-banner" id="renew-extract-banner" style="display:none">
+          <div>
+            <div class="extract-banner-text">✨ Extract renewal details</div>
+            <div class="extract-banner-sub">AI will read the notice and update the expiry date and premium</div>
+          </div>
+          <button class="btn-extract" id="renew-extract-btn" onclick="extractRenewal()">Extract</button>
+        </div>
+        <div class="extraction-progress" id="renew-extraction-progress" style="display:none">
+          <div class="extraction-spinner"></div>
+          <span>Reading renewal notice…</span>
+        </div>
+        <div id="renew-extracted-fields" style="display:none">
+          <div class="form-row" style="margin-top:4px">
+            <div class="form-group">
+              <label class="form-label">New Expiry Date * <span class="prefill-badge" id="renew-badge-date" style="display:none">✨ AI filled</span></label>
+              <input type="date" class="form-input" id="renew-date-upload">
+            </div>
+            <div class="form-group">
+              <label class="form-label">New Premium <span class="prefill-badge" id="renew-badge-premium" style="display:none">✨ AI filled</span></label>
+              <input type="number" class="form-input" id="renew-premium-upload" placeholder="Leave blank if unchanged">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Coverage Changes <span class="prefill-badge" id="renew-badge-notes" style="display:none">✨ AI filled</span></label>
+            <textarea class="form-textarea" id="renew-notes-upload" placeholder="Any changes noted in the renewal notice." style="min-height:80px"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeRenewModal()">Cancel</button>
+      <button class="btn btn-gold" id="renew-save-btn" onclick="saveRenewal()">Save Renewal</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── PIN Auth ─────────────────────────────────────────────────────────────────
+const PIN_KEY   = 'policyvault_pin_v1';
+const NAME_KEY  = 'policyvault_name_v1';
+let currentUser = null;
+const chatHistoryDash = [];
+const chatHistoryAI   = [];
+
+function getPINHash()   { return localStorage.getItem(PIN_KEY) || null; }
+function savePINHash(h) { localStorage.setItem(PIN_KEY, h); }
+function removePINHash(){ localStorage.removeItem(PIN_KEY); }
+function getDisplayName()    { return localStorage.getItem(NAME_KEY) || 'Me'; }
+function saveDisplayName(n)  { localStorage.setItem(NAME_KEY, n); }
+
+function pinHash(pin) {
+  let h = 0;
+  const s = pin + 'pv_pin_2025';
+  for (let i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; }
+  return Math.abs(h).toString(36);
+}
+
+// ─── PIN screen state ──────────────────────────────────────────────────────────
+let pinBuffer = '';
+
+function pinInput(digit) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += digit;
+  renderPinDots();
+  if (pinBuffer.length === 4) setTimeout(checkPIN, 80);
+}
+
+function pinDelete() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  renderPinDots();
+}
+
+function renderPinDots(error = false) {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    dot.classList.toggle('filled', i < pinBuffer.length && !error);
+    dot.classList.toggle('error', error);
+  }
+}
+
+function checkPIN() {
+  const stored = getPINHash();
+  if (!stored || pinHash(pinBuffer) === stored) {
+    enterApp();
+  } else {
+    renderPinDots(true);
+    const el = document.getElementById('pin-error');
+    el.textContent = 'Incorrect PIN. Try again.';
+    el.style.display = 'block';
+    setTimeout(() => {
+      pinBuffer = '';
+      renderPinDots(false);
+      el.style.display = 'none';
+    }, 1000);
+  }
+}
+
+function clearPinAndEnter() {
+  if (!confirm('This will remove your PIN and open your vault. Continue?')) return;
+  removePINHash();
+  enterApp();
+}
+
+// ─── App entry ────────────────────────────────────────────────────────────────
+function enterApp() {
+  document.getElementById('auth-pin').classList.add('hidden');
+  const app = document.getElementById('main-app');
+  app.style.display = 'flex';
+  app.style.flexDirection = 'column';
+  app.style.minHeight = '100vh';
+  currentUser = { email: 'local', name: getDisplayName() };
+  updateHeaderUser();
+  loadPolicies();
+}
+
+function updateHeaderUser() {
+  const name = currentUser ? currentUser.name : 'Me';
+  const initials = name.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2) || '👤';
+  const avatarEl = document.getElementById('user-avatar');
+  const nameEl   = document.getElementById('user-name-display');
+  if (avatarEl) avatarEl.textContent = initials;
+  if (nameEl)   nameEl.textContent   = name.split(' ')[0] || 'Me';
+}
+
+function lockApp() {
+  if (!getPINHash()) { showToast('Set a PIN in your profile first to use the lock.', true); return; }
+  pinBuffer = '';
+  renderPinDots();
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('auth-pin').classList.remove('hidden');
+  chatHistoryDash.length = 0;
+  chatHistoryAI.length   = 0;
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+function initAuth() {
+  const hasPIN = !!getPINHash();
+  if (hasPIN) {
+    document.getElementById('auth-pin').classList.remove('hidden');
+  } else {
+    enterApp();
+  }
+}
+
+
+// ─── State ───────────────────────────────────────────────────────────────────
+let policies = [];
+let currentView = 'dashboard';
+let currentFilter = null;
+let viewingPolicyId = null;
+const STORAGE_KEY = 'policyvault_policies_v1';
+
+const TYPE_COLORS = {
+  'Medical': 'var(--medical)',
+  'Travel': 'var(--travel)',
+  'Investment / Life': 'var(--life)',
+  'Property': 'var(--property)',
+  'Critical Illness': 'var(--ci)',
+  'Motor': 'var(--motor)',
+  'Personal Accident': 'var(--pa)',
+  'Domestic Helper': 'var(--domestic)'
+};
+
+const TYPE_ICONS = {
+  'Medical': '🏥',
+  'Travel': '✈️',
+  'Investment / Life': '📈',
+  'Property': '🏠',
+  'Critical Illness': '🫀',
+  'Motor': '🚗',
+  'Personal Accident': '🩹',
+  'Domestic Helper': '🏡'
+};
+
+// ─── IndexedDB Storage Layer ──────────────────────────────────────────────────
+const DB_NAME = 'PolicyVaultDB';
+const DB_VERSION = 1;
+let db = null;
+
+function getUserPrefix() {
+  return 'local';
+}
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    if (db) { resolve(db); return; }
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('policies')) {
+        d.createObjectStore('policies', { keyPath: 'storeKey' });
+      }
+      if (!d.objectStoreNames.contains('documents')) {
+        d.createObjectStore('documents', { keyPath: 'storeKey' });
+      }
+    };
+    req.onsuccess = e => { db = e.target.result; resolve(db); };
+    req.onerror = e => reject(e.target.error);
+  });
+}
+
+function idbGet(store, key) {
+  return openDB().then(d => new Promise((resolve, reject) => {
+    const tx = d.transaction(store, 'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = e => reject(e.target.error);
+  }));
+}
+
+function idbPut(store, value) {
+  return openDB().then(d => new Promise((resolve, reject) => {
+    const tx = d.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).put(value);
+    req.onsuccess = () => resolve();
+    req.onerror = e => reject(e.target.error);
+  }));
+}
+
+function idbDelete(store, key) {
+  return openDB().then(d => new Promise((resolve, reject) => {
+    const tx = d.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).delete(key);
+    req.onsuccess = () => resolve();
+    req.onerror = e => reject(e.target.error);
+  }));
+}
+
+// Strip binary doc data from policy before storing metadata
+function policyMetadata(p) {
+  const { docBase64, docMime, renewalDocBase64, ...meta } = p;
+  return meta;
+}
+
+async function loadPolicies() {
+  policies = [];
+  try {
+    const record = await idbGet('policies', getUserPrefix());
+    if (record && Array.isArray(record.data) && record.data.length > 0) {
+      policies = record.data;
+    }
+  } catch(e) {
+    // No saved data yet — try migrating from old window.storage
+    try {
+      const oldKey = `${STORAGE_KEY}_${getUserPrefix()}`;
+      const old = await window.storage.get(oldKey);
+      if (old && old.value) {
+        const parsed = JSON.parse(old.value);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Migrate: split docs into document store, save metadata
+          for (const p of parsed) {
+            if (p.docBase64) {
+              await idbPut('documents', {
+                storeKey: `${getUserPrefix()}_${p.id}_policy`,
+                policyId: p.id, type: 'policy',
+                base64: p.docBase64, mime: p.docMime || 'application/pdf',
+                name: p.docName, size: p.docSize, date: p.docDate
+              });
+            }
+            if (p.renewalDocBase64) {
+              await idbPut('documents', {
+                storeKey: `${getUserPrefix()}_${p.id}_renewal`,
+                policyId: p.id, type: 'renewal',
+                base64: p.renewalDocBase64,
+                name: p.renewalDocName, size: p.renewalDocSize, date: p.renewalDocDate
+              });
+            }
+          }
+          policies = parsed.map(policyMetadata);
+          await savePolicies();
+        }
+      }
+    } catch(e2) { /* fresh start */ }
+  }
+  updateUI();
+}
+
+async function savePolicies() {
+  try {
+    await idbPut('policies', {
+      storeKey: getUserPrefix(),
+      data: policies.map(policyMetadata)
+    });
+  } catch(e) {
+    console.error('Save error', e);
+  }
+}
+
+// Save a document to the documents store
+async function saveDocument(policyId, type, base64, mime, name, size, date) {
+  await idbPut('documents', {
+    storeKey: `${getUserPrefix()}_${policyId}_${type}`,
+    policyId, type, base64, mime: mime || 'application/pdf', name, size, date
+  });
+}
+
+// Load a document from the documents store
+async function loadDocument(policyId, type) {
+  try {
+    return await idbGet('documents', `${getUserPrefix()}_${policyId}_${type}`);
+  } catch(e) { return null; }
+}
+
+// Delete a policy's documents
+async function deleteDocuments(policyId) {
+  await idbDelete('documents', `${getUserPrefix()}_${policyId}_policy`);
+  await idbDelete('documents', `${getUserPrefix()}_${policyId}_renewal`);
+}
+
+// Collect all docs for AI context
+async function loadAllDocuments() {
+  const docs = [];
+  for (const p of policies) {
+    const doc = await loadDocument(p.id, 'policy');
+    if (doc && doc.base64) docs.push({ policyName: p.name, type: 'policy', base64: doc.base64, name: doc.name || 'policy.pdf' });
+    const renewal = await loadDocument(p.id, 'renewal');
+    if (renewal && renewal.base64) docs.push({ policyName: p.name, type: 'renewal', base64: renewal.base64, name: renewal.name || 'renewal.pdf' });
+  }
+  return docs;
+}
+
+// ─── Navigation ─────────────────────────────────────────────────────────────
+function showView(view, filter = null) {
+  currentView = view;
+  currentFilter = filter;
+  document.getElementById('view-dashboard').style.display = view === 'dashboard' ? 'block' : 'none';
+  document.getElementById('view-policies').style.display = view === 'policies' ? 'block' : 'none';
+  document.getElementById('view-ai').style.display = view === 'ai' ? 'block' : 'none';
+
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  if (view === 'dashboard') document.querySelectorAll('.nav-item')[0].classList.add('active');
+  if (view === 'policies') document.querySelectorAll('.nav-item')[1].classList.add('active');
+  if (view === 'ai') document.querySelectorAll('.nav-item')[2].classList.add('active');
+
+  if (view === 'policies') renderPolicies();
+}
+
+function filterByType(type) {
+  showView('policies', type);
+  const titleEl = document.getElementById('policies-view-title');
+  const subEl = document.getElementById('policies-view-sub');
+  titleEl.textContent = type + ' Policies';
+  subEl.textContent = `Showing all ${type.toLowerCase()} insurance policies`;
+}
+
+// ─── Frequency helpers (must be defined before updateUI/updateStats) ──────────
+const FREQ_MULTIPLIER = { 'yearly': 1, 'half-yearly': 2, 'quarterly': 4, 'monthly': 12, 'single': 0 };
+const FREQ_LABEL      = { 'yearly': '/yr', 'half-yearly': '/half-yr', 'quarterly': '/qtr', 'monthly': '/mo', 'single': ' (single)' };
+const FREQ_DISPLAY    = { 'yearly': 'Yearly', 'half-yearly': 'Half-yearly', 'quarterly': 'Quarterly', 'monthly': 'Monthly', 'single': 'Single Premium' };
+
+function annualise(premium, frequency) {
+  const amt = parseFloat(premium) || 0;
+  const mult = FREQ_MULTIPLIER[frequency] ?? 1;
+  return amt * mult;
+}
+
+function formatPremium(premium, frequency) {
+  const amt = parseFloat(premium) || 0;
+  if (!amt) return '$0';
+  const suffix = FREQ_LABEL[frequency] || '/yr';
+  return `$${amt.toLocaleString()}${suffix}`;
+}
+
+function updateAnnualisedDisplay() {
+  const amt = parseFloat(document.getElementById('f-premium').value) || 0;
+  const freq = document.getElementById('f-frequency').value;
+  const annual = annualise(amt, freq);
+  const el = document.getElementById('f-annualised');
+  if (!amt) { el.textContent = '—'; return; }
+  if (freq === 'single') { el.textContent = `$${amt.toLocaleString()} (one-time)`; return; }
+  el.textContent = freq === 'yearly' ? `$${annual.toLocaleString()}` : `$${annual.toLocaleString()}/yr`;
+}
+
+// ─── UI Update ───────────────────────────────────────────────────────────────
+function updateUI() {
+  updateStats();
+  updateSidebar();
+  renderDashboard();
+  updateDocIndicators();
+  if (currentView === 'policies') renderPolicies();
+}
+
+async function updateDocIndicators() {
+  const docs = await loadAllDocuments();
+  const hasDocs = docs.length > 0;
+  const label = hasDocs ? `📋 ${docs.length} doc${docs.length > 1 ? 's' : ''} attached` : '';
+  ['dash', 'ai'].forEach(id => {
+    const el = document.getElementById(`chat-doc-indicator-${id}`);
+    if (el) {
+      el.style.display = hasDocs ? 'block' : 'none';
+      el.textContent = label;
+    }
+  });
+}
+
+function updateStats() {
+  const total = policies.length;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('sb-count').textContent = total;
+
+  const premium = policies.reduce((s, p) => {
+    const days = daysUntil(p.renewal);
+    const isLapsed = days !== null && days < 0;
+    return s + (isLapsed ? 0 : annualise(p.premium, p.frequency || 'yearly'));
+  }, 0);
+  document.getElementById('stat-premium').textContent = `$${premium.toLocaleString()}`;
+
+  const now = new Date();
+  const soon = policies.filter(p => {
+    if (!p.renewal) return false;
+    const d = new Date(p.renewal);
+    const diff = (d - now) / (1000 * 60 * 60 * 24);
+    return diff >= 0 && diff <= 60;
+  }).length;
+  document.getElementById('stat-renewing').textContent = soon;
+
+  const providers = new Set(policies.map(p => p.provider).filter(Boolean));
+  document.getElementById('stat-providers').textContent = providers.size;
+}
+
+function updateSidebar() {
+  ['Critical Illness', 'Domestic Helper', 'Investment / Life', 'Medical', 'Motor', 'Personal Accident', 'Property', 'Travel'].forEach(type => {
+    const count = policies.filter(p => p.type === type).length;
+    const keyMap = {
+      'Investment / Life': 'sb-life',
+      'Critical Illness': 'sb-ci',
+      'Domestic Helper': 'sb-domestic',
+      'Motor': 'sb-motor',
+      'Personal Accident': 'sb-pa',
+    };
+    const key = keyMap[type] || `sb-${type.toLowerCase()}`;
+    const el = document.getElementById(key);
+    if (el) el.textContent = count;
+  });
+}
+
+function daysUntil(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  const now = new Date();
+  return Math.round((d - now) / (1000 * 60 * 60 * 24));
+}
+
+function renderPolicyCard(p, container) {
+  const card = document.createElement('div');
+  card.className = 'policy-card';
+
+  const days = daysUntil(p.renewal);
+  const isLapsed = days !== null && days < 0;
+  const isSoonExpiring = !isLapsed && days !== null && days <= 60;
+
+  if (isLapsed) {
+    card.classList.add('lapsed');
+    card.style.setProperty('--card-color', '#7a8c80');
+  } else {
+    card.style.setProperty('--card-color', TYPE_COLORS[p.type] || 'var(--gold)');
+  }
+
+  const statusBadge = isLapsed
+    ? `<span class="lapsed-badge">⏸ Lapsed</span>`
+    : isSoonExpiring
+      ? `<span class="renewal-warning">⚠️ ${days}d</span>`
+      : '';
+
+  const thirdMeta = {
+    'Medical':           { label: 'Sum Insured'   },
+    'Travel':            { label: 'Trip Limit'    },
+    'Investment / Life': { label: 'Sum Assured'   },
+    'Property':          { label: 'Sum Insured'   },
+    'Critical Illness':  { label: 'Sum Assured'   },
+    'Motor':             { label: 'Vehicle Value' },
+    'Personal Accident': { label: 'Sum Assured'   },
+    'Domestic Helper':   { label: 'Sum Insured'   },
+  }[p.type] || { label: 'Limit' };
+
+  card.innerHTML = `
+    <div class="card-type-badge">
+      <div class="card-type-dot"></div>
+      ${TYPE_ICONS[p.type] || '📄'} ${p.type || 'Policy'}
+    </div>
+    <div class="card-name">${p.name}${statusBadge}</div>
+    <div class="card-provider">${p.provider || 'Unknown Provider'}</div>
+    <div class="card-meta">
+      <div class="meta-item">
+        <div class="meta-label">Premium</div>
+        <div class="meta-value">${(p.premium && parseFloat(p.premium) > 0) ? formatPremium(p.premium, p.frequency || 'yearly') : '$0'}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">${isLapsed ? 'Lapsed On' : 'Renews'}</div>
+        <div class="meta-value">${p.renewal ? formatDate(p.renewal) : '—'}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">${thirdMeta.label}</div>
+        <div class="meta-value" style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.limit || '—'}</div>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="card-btn" onclick="viewPolicy('${p.id}')">View Details</button>
+      <button class="card-btn renew" onclick="openRenewModal('${p.id}')">🔄 Renew</button>
+      <button class="card-btn" onclick="openEditModal('${p.id}')">Edit</button>
+      <button class="card-btn danger" onclick="deletePolicy('${p.id}')">Delete</button>
+    </div>
+  `;
+  container.appendChild(card);
+}
+
+function sortedPolicies(list) {
+  // Most recently added first (highest numeric id = most recent)
+  return [...list].sort((a, b) => (b.id > a.id ? 1 : -1));
+}
+
+function renderDashboard() {
+  const grid = document.getElementById('dashboard-policy-grid');
+  const empty = document.getElementById('empty-dashboard');
+  grid.innerHTML = '';
+  if (policies.length === 0) {
+    grid.style.display = 'none';
+    empty.style.display = 'block';
+  } else {
+    grid.style.display = 'grid';
+    empty.style.display = 'none';
+    sortedPolicies(policies).slice(0, 6).forEach(p => renderPolicyCard(p, grid));
+  }
+}
+
+function renderPolicies() {
+  const grid = document.getElementById('all-policy-grid');
+  const empty = document.getElementById('empty-policies');
+  grid.innerHTML = '';
+  const base = currentFilter ? policies.filter(p => p.type === currentFilter) : policies;
+  const filtered = sortedPolicies(base);
+  if (filtered.length === 0) {
+    grid.style.display = 'none';
+    empty.style.display = 'block';
+  } else {
+    grid.style.display = 'grid';
+    empty.style.display = 'none';
+    filtered.forEach(p => renderPolicyCard(p, grid));
+  }
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  return new Date(dateStr).toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+// ─── Add/Edit Modal ──────────────────────────────────────────────────────────
+function openAddModal() {
+  document.getElementById('modal-title').textContent = 'Add Policy';
+  document.getElementById('edit-id').value = '';
+  ['name','type','provider','number','premium','start','renewal','limit','notes'].forEach(f => {
+    const el = document.getElementById(`f-${f}`);
+    if (el) el.value = '';
+  });
+  document.getElementById('f-frequency').value = 'yearly';
+  document.getElementById('f-annualised').textContent = '—';
+  resetUploadUI();
+  document.getElementById('add-modal').classList.remove('hidden');
+}
+
+function openEditModal(id) {
+  const p = policies.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('modal-title').textContent = 'Edit Policy';
+  document.getElementById('edit-id').value = id;
+  document.getElementById('f-name').value = p.name || '';
+  document.getElementById('f-type').value = p.type || '';
+  document.getElementById('f-provider').value = p.provider || '';
+  document.getElementById('f-number').value = p.number || '';
+  document.getElementById('f-premium').value = p.premium || '';
+  document.getElementById('f-frequency').value = p.frequency || 'yearly';
+  updateAnnualisedDisplay();
+  document.getElementById('f-start').value = p.start || '';
+  document.getElementById('f-renewal').value = p.renewal || '';
+  document.getElementById('f-limit').value = p.limit || '';
+  document.getElementById('f-notes').value = p.notes || '';
+  resetUploadUI();
+  // Show existing doc if any
+  if (p.docName) {
+    showFilePill(p.docName, p.docSize, false);
+  }
+  document.getElementById('detail-modal').classList.add('hidden');
+  document.getElementById('add-modal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('add-modal').classList.add('hidden');
+  currentDocBase64 = null;
+  currentDocMime = null;
+  currentDocName = null;
+}
+
+async function savePolicy() {
+  const name = document.getElementById('f-name').value.trim();
+  const type = document.getElementById('f-type').value;
+  const provider = document.getElementById('f-provider').value.trim();
+  if (!name || !type || !provider) {
+    alert('Please fill in the Policy Name, Type, and Provider.');
+    return;
+  }
+
+  const editId = document.getElementById('edit-id').value;
+  const existing = editId ? policies.find(x => x.id === editId) : null;
+  const policyId = editId || Date.now().toString();
+
+  // Save document to IndexedDB if a new one was uploaded
+  if (currentDocBase64) {
+    await saveDocument(
+      policyId, 'policy',
+      currentDocBase64, currentDocMime || 'application/pdf',
+      currentDocName, currentDocSize,
+      new Date().toLocaleDateString('en-SG', {day:'numeric',month:'short',year:'numeric'})
+    );
+  }
+
+  // Determine doc metadata to keep on policy record (no base64)
+  const docName = currentDocName || (existing && existing.docName) || null;
+  const docSize = currentDocSize || (existing && existing.docSize) || null;
+  const docDate = currentDocName
+    ? new Date().toLocaleDateString('en-SG', {day:'numeric',month:'short',year:'numeric'})
+    : (existing && existing.docDate) || null;
+
+  const policy = {
+    id: policyId,
+    name, type, provider,
+    number: document.getElementById('f-number').value.trim(),
+    premium: document.getElementById('f-premium').value,
+    frequency: document.getElementById('f-frequency').value || 'yearly',
+    start: document.getElementById('f-start').value,
+    renewal: document.getElementById('f-renewal').value,
+    limit: document.getElementById('f-limit').value.trim(),
+    notes: document.getElementById('f-notes').value.trim(),
+    // Only metadata, no base64
+    docName, docSize, docDate,
+  };
+
+  const idx = policies.findIndex(x => x.id === policy.id);
+  if (idx >= 0) policies[idx] = policy;
+  else policies.push(policy);
+
+  await savePolicies();
+  updateUI();
+  closeModal();
+}
+
+// ─── Document Upload & Extraction ─────────────────────────────────────────────
+let currentDocBase64 = null;
+let currentDocMime = null;
+let currentDocName = null;
+let currentDocSize = null;
+
+function resetUploadUI() {
+  currentDocBase64 = null; currentDocMime = null; currentDocName = null; currentDocSize = null;
+  document.getElementById('upload-zone-wrap').style.display = 'block';
+  document.getElementById('file-pill').style.display = 'none';
+  document.getElementById('extract-banner').style.display = 'none';
+  document.getElementById('extraction-progress').style.display = 'none';
+  document.getElementById('doc-file-input').value = '';
+  // Hide all prefill badges
+  ['name','type','provider','number','premium','frequency','start','renewal','limit','notes'].forEach(f => {
+    const b = document.getElementById(`badge-${f}`);
+    if (b) b.style.display = 'none';
+    const el = document.getElementById(`f-${f}`);
+    if (el) el.classList.remove('prefilled');
+  });
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/(1024*1024)).toFixed(1) + ' MB';
+}
+
+function showFilePill(name, size, showExtract = true) {
+  document.getElementById('upload-zone-wrap').style.display = 'none';
+  const pill = document.getElementById('file-pill');
+  pill.style.display = 'flex';
+  document.getElementById('file-pill-icon').textContent = '📋';
+  document.getElementById('file-pill-name').textContent = name;
+  document.getElementById('file-pill-size').textContent = size || '';
+  if (showExtract) {
+    document.getElementById('extract-banner').style.display = 'flex';
+  }
+}
+
+function handleFileSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  currentDocName = file.name;
+  currentDocSize = formatBytes(file.size);
+  currentDocMime = 'application/pdf';
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    currentDocBase64 = e.target.result.split(',')[1];
+    showFilePill(file.name, currentDocSize, true);
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeFile() {
+  resetUploadUI();
+}
+
+// Drag and drop
+const zone = document.getElementById('upload-zone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    document.getElementById('doc-file-input').files = e.dataTransfer.files;
+    handleFileSelect({ target: { files: [file] } });
+  }
+});
+
+async function extractFromDocument() {
+  if (!currentDocBase64) return;
+  const btn = document.getElementById('extract-btn');
+  btn.disabled = true;
+  document.getElementById('extract-banner').style.display = 'none';
+  document.getElementById('extraction-progress').style.display = 'flex';
+
+  const isImage = false;
+  const sourceObj = { type: 'base64', media_type: 'application/pdf', data: currentDocBase64 };
+  const contentBlock = { type: 'document', source: sourceObj };
+
+  const prompt = `You are an expert at reading insurance policy documents. Extract the following information from this document and return it ONLY as a valid JSON object with no explanation, preamble, or markdown fences. If a field cannot be found, use null.
+
+Required JSON format:
+{
+  "name": "Full policy name/product name",
+  "type": "Critical Illness|Domestic Helper|Investment / Life|Medical|Motor|Personal Accident|Property|Travel",
+  "provider": "Insurance company name",
+  "number": "Policy number or certificate number",
+  "premium": "Premium amount as a number only (no currency symbols or commas) — use the per-payment amount, not annualised",
+  "frequency": "yearly|monthly|quarterly|half-yearly|single",
+  "start": "Policy start date in YYYY-MM-DD format",
+  "renewal": "Policy renewal or expiry date in YYYY-MM-DD format",
+  "limit": "Coverage limit or sum insured as a descriptive string",
+  "notes": "A clear, concise summary (3-6 sentences) of key coverage: what is covered, major exclusions, deductibles, and any notable benefits"
+}
+
+Return only the JSON object.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: [contentBlock, { type: 'text', text: prompt }]
+        }]
+      })
+    });
+
+    const data = await resp.json();
+    const rawText = data.content?.[0]?.text || '';
+    // Strip any accidental markdown
+    const cleaned = rawText.replace(/```json|```/g, '').trim();
+    const extracted = JSON.parse(cleaned);
+
+    // Pre-fill form fields
+    const fieldMap = { name: 'f-name', type: 'f-type', provider: 'f-provider', number: 'f-number', premium: 'f-premium', frequency: 'f-frequency', start: 'f-start', renewal: 'f-renewal', limit: 'f-limit', notes: 'f-notes' };
+    Object.entries(fieldMap).forEach(([key, elId]) => {
+      const val = extracted[key];
+      if (val !== null && val !== undefined && val !== '') {
+        const el = document.getElementById(elId);
+        if (el) {
+          el.value = val;
+          el.classList.add('prefilled');
+        }
+        const badge = document.getElementById(`badge-${key}`);
+        if (badge) badge.style.display = 'inline-flex';
+      }
+    });
+
+    document.getElementById('extraction-progress').style.display = 'none';
+    updateAnnualisedDisplay();
+    // Show a small success note
+    const prog = document.getElementById('extraction-progress');
+    prog.innerHTML = '<span style="color:var(--green);font-size:13px">✅ Fields pre-filled from your document — please review and adjust as needed.</span>';
+    prog.style.display = 'flex';
+    btn.disabled = false;
+
+  } catch(err) {
+    document.getElementById('extraction-progress').style.display = 'none';
+    document.getElementById('extract-banner').style.display = 'flex';
+    btn.disabled = false;
+    alert('Could not extract information from the document. Please fill in the fields manually.');
+  }
+}
+
+// View uploaded document
+async function viewDocument(policyId) {
+  const doc = await loadDocument(policyId, 'policy');
+  if (!doc || !doc.base64) return;
+  const byteStr = atob(doc.base64);
+  const ab = new ArrayBuffer(byteStr.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteStr.length; i++) ia[i] = byteStr.charCodeAt(i);
+  window.open(URL.createObjectURL(new Blob([ab], { type: doc.mime || 'application/pdf' })), '_blank');
+}
+
+async function viewRenewalDocument(policyId) {
+  const doc = await loadDocument(policyId, 'renewal');
+  if (!doc || !doc.base64) return;
+  const byteStr = atob(doc.base64);
+  const ab = new ArrayBuffer(byteStr.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteStr.length; i++) ia[i] = byteStr.charCodeAt(i);
+  window.open(URL.createObjectURL(new Blob([ab], { type: 'application/pdf' })), '_blank');
+}
+
+// ─── View Detail Modal ───────────────────────────────────────────────────────
+function viewPolicy(id) {
+  const p = policies.find(x => x.id === id);
+  if (!p) return;
+  viewingPolicyId = id;
+  document.getElementById('detail-title').textContent = p.name;
+  const days = daysUntil(p.renewal);
+  const isLapsed = days !== null && days < 0;
+  const color = isLapsed ? '#7a8c80' : (TYPE_COLORS[p.type] || 'var(--gold)');
+  document.getElementById('detail-body').innerHTML = `
+    ${isLapsed ? `<div class="lapsed-banner">
+      <div class="lapsed-banner-icon">⏸</div>
+      <div class="lapsed-banner-text"><strong>This policy has lapsed</strong> as of ${formatDate(p.renewal)}. It is retained here for your reference but is no longer active. Contact your insurer to discuss reinstatement options.</div>
+    </div>` : ''}
+    <div class="detail-section">
+      <div class="card-type-badge" style="--card-color: ${color}">
+        <div class="card-type-dot" style="background: ${color}"></div>
+        ${TYPE_ICONS[p.type] || ''} ${p.type}
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Policy Information</div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="detail-label">Provider</div><div class="detail-value">${p.provider || '—'}</div></div>
+        <div class="detail-item"><div class="detail-label">Policy Number</div><div class="detail-value">${p.number || '—'}</div></div>
+        <div class="detail-item"><div class="detail-label">${p.frequency === 'single' ? 'Single Premium' : 'Premium Amount'}</div><div class="detail-value">${p.premium ? formatPremium(p.premium, p.frequency || 'yearly') : '$0'}</div></div>
+        <div class="detail-item"><div class="detail-label">Payment Frequency</div><div class="detail-value">${FREQ_DISPLAY[p.frequency || 'yearly']}${p.frequency !== 'yearly' && p.frequency !== 'single' && p.premium ? ` · <span style="color:var(--cream-dim);font-size:12px">$${annualise(p.premium, p.frequency).toLocaleString()}/yr</span>` : ''}</div></div>
+        <div class="detail-item"><div class="detail-label">${{'Medical':'Sum Insured','Travel':'Trip Limit','Investment / Life':'Sum Assured','Property':'Sum Insured','Critical Illness':'Sum Assured','Motor':'Vehicle Value','Personal Accident':'Sum Assured','Domestic Helper':'Sum Insured'}[p.type] || 'Limit'}</div><div class="detail-value" style="font-size:12px">${p.limit || '—'}</div></div>
+        <div class="detail-item"><div class="detail-label">Start Date</div><div class="detail-value">${formatDate(p.start)}</div></div>
+        <div class="detail-item"><div class="detail-label">${isLapsed ? 'Lapsed On' : 'Renewal Date'}</div><div class="detail-value">${formatDate(p.renewal)}</div></div>
+      </div>
+    </div>
+    ${p.notes ? `<div class="detail-section">
+      <div class="detail-section-title">Coverage Details & Notes</div>
+      <div class="detail-notes">${p.notes.replace(/\n/g, '<br>')}</div>
+    </div>` : ''}
+    ${p.docName ? `<div class="detail-section">
+      <div class="detail-section-title">Policy Document</div>
+      <div class="doc-attachment">
+        <div class="doc-attachment-icon">📋</div>
+        <div class="doc-attachment-info">
+          <div class="doc-attachment-name">${p.docName}</div>
+          <div class="doc-attachment-meta">${p.docSize || ''} · Uploaded ${p.docDate || ''}</div>
+        </div>
+        <button class="doc-view-btn" onclick="viewDocument('${p.id}')">View</button>
+      </div>
+    </div>` : ''}
+    ${p.renewalDocName ? `<div class="detail-section">
+      <div class="detail-section-title">Latest Renewal Notice</div>
+      <div class="doc-attachment">
+        <div class="doc-attachment-icon">🔄</div>
+        <div class="doc-attachment-info">
+          <div class="doc-attachment-name">${p.renewalDocName}</div>
+          <div class="doc-attachment-meta">${p.renewalDocSize || ''} · Uploaded ${p.renewalDocDate || ''}</div>
+        </div>
+        <button class="doc-view-btn" onclick="viewRenewalDocument('${p.id}')">View</button>
+      </div>
+    </div>` : ''}
+  `;
+  document.getElementById('detail-modal').classList.remove('hidden');
+}
+
+function closeDetailModal() {
+  document.getElementById('detail-modal').classList.add('hidden');
+  viewingPolicyId = null;
+}
+
+function editCurrentPolicy() {
+  if (viewingPolicyId) openEditModal(viewingPolicyId);
+}
+
+async function deleteCurrentPolicy() {
+  if (viewingPolicyId && confirm('Delete this policy? This cannot be undone.')) {
+    policies = policies.filter(p => p.id !== viewingPolicyId);
+    await deleteDocuments(viewingPolicyId);
+    await savePolicies();
+    updateUI();
+    closeDetailModal();
+  }
+}
+
+async function deletePolicy(id) {
+  if (confirm('Delete this policy? This cannot be undone.')) {
+    policies = policies.filter(p => p.id !== id);
+    await deleteDocuments(id);
+    await savePolicies();
+    updateUI();
+  }
+}
+
+// ─── AI Chat ─────────────────────────────────────────────────────────────────
+function buildPolicyContext() {
+  if (policies.length === 0) return "The user has no policies stored yet.";
+  return policies.map(p => {
+    return `Policy: ${p.name}
+Type: ${p.type}
+Provider: ${p.provider}
+Policy Number: ${p.number || 'N/A'}
+Annual Premium: ${p.premium ? formatPremium(p.premium, p.frequency || 'yearly') + (p.frequency && p.frequency !== 'yearly' && p.frequency !== 'single' ? ` (${annualise(p.premium, p.frequency).toLocaleString()}/yr annualised)` : '') : 'N/A'}
+Coverage Limit: ${p.limit || 'N/A'}
+Start Date: ${p.start || 'N/A'}
+Renewal Date: ${p.renewal || 'N/A'}
+Has Uploaded Document: ${p.docName ? 'Yes — full policy PDF is attached to this message for reference' : 'No'}
+Notes/Coverage Details: ${p.notes || 'N/A'}`;
+  }).join('\n\n---\n\n');
+}
+
+async function callAI(userMsg, history, messagesContainerId) {
+  const docs = await loadAllDocuments();
+  const hasDocs = docs.length > 0;
+
+  const sysPrompt = `You are PolicyVault, a helpful and knowledgeable insurance assistant. You have access to the user's insurance portfolio summary below${hasDocs ? ', and the actual policy PDF documents are attached to the user message for you to read directly' : ''}.
+
+When answering questions:
+- Prioritise information found in the attached PDF documents over the summary notes, as they contain the full policy terms
+- If you find specific details in a document (thresholds, limits, exclusions, waiting periods, etc.), cite them precisely
+- If something genuinely cannot be found in either the notes or the documents, say so clearly
+- Format numbers and dates clearly. Be helpful, direct, and friendly.
+
+USER'S INSURANCE PORTFOLIO SUMMARY:
+${buildPolicyContext()}
+
+Today's date: ${new Date().toLocaleDateString('en-SG', {day:'numeric',month:'long',year:'numeric'})}`;
+
+  // Build the user message content — text plus any PDF attachments
+  const userContent = [];
+
+  // Attach each policy document
+  if (hasDocs) {
+    docs.forEach(doc => {
+      userContent.push({
+        type: 'document',
+        source: { type: 'base64', media_type: 'application/pdf', data: doc.base64 },
+        title: `${doc.policyName} — ${doc.type === 'renewal' ? 'Renewal Notice' : 'Policy Document'}`
+      });
+    });
+  }
+
+  // Add the user's text question
+  userContent.push({ type: 'text', text: userMsg });
+
+  // For history messages, keep them as plain text (documents only on current message)
+  const messages = [
+    ...history,
+    { role: 'user', content: hasDocs ? userContent : userMsg }
+  ];
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1500,
+      system: sysPrompt,
+      messages
+    })
+  });
+  const data = await resp.json();
+  return { text: data.content?.[0]?.text || 'Sorry, I could not generate a response.', hasDocs };
+}
+
+function addMessage(containerId, role, text) {
+  const container = document.getElementById(containerId);
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+  div.innerHTML = `
+    <div class="msg-avatar ${role}">${role === 'ai' ? '✨' : '👤'}</div>
+    <div class="msg-bubble">${text.replace(/\n/g, '<br>')}</div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function addThinking(containerId, hasDocs) {
+  const container = document.getElementById(containerId);
+  const div = document.createElement('div');
+  div.className = 'message ai';
+  div.id = 'thinking-bubble';
+  const label = hasDocs ? 'Reading your policy documents' : 'Thinking';
+  div.innerHTML = `
+    <div class="msg-avatar ai">✨</div>
+    <div class="msg-bubble thinking">${label}<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return div;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input-dash');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  addMessage('chat-messages-dash', 'user', msg);
+  chatHistoryDash.push({ role: 'user', content: msg });
+
+  const btn = document.getElementById('chat-send-btn');
+  btn.disabled = true;
+
+  const docs = await loadAllDocuments();
+  const thinking = addThinking('chat-messages-dash', docs.length > 0);
+
+  try {
+    const { text, hasDocs } = await callAI(msg, chatHistoryDash.slice(0, -1), 'chat-messages-dash');
+    thinking.remove();
+    addMessage('chat-messages-dash', 'ai', text);
+    chatHistoryDash.push({ role: 'assistant', content: text });
+  } catch(e) {
+    thinking.remove();
+    addMessage('chat-messages-dash', 'ai', 'Sorry, there was an error connecting to the AI. Please try again.');
+  }
+  btn.disabled = false;
+}
+
+async function sendMessageAI() {
+  const input = document.getElementById('chat-input-ai');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  addMessage('chat-messages-ai', 'user', msg);
+  chatHistoryAI.push({ role: 'user', content: msg });
+
+  const btn = document.getElementById('chat-send-ai');
+  btn.disabled = true;
+
+  const docs = await loadAllDocuments();
+  const thinking = addThinking('chat-messages-ai', docs.length > 0);
+
+  try {
+    const { text, hasDocs } = await callAI(msg, chatHistoryAI.slice(0, -1), 'chat-messages-ai');
+    thinking.remove();
+    addMessage('chat-messages-ai', 'ai', text);
+    chatHistoryAI.push({ role: 'assistant', content: text });
+  } catch(e) {
+    thinking.remove();
+    addMessage('chat-messages-ai', 'ai', 'Sorry, there was an error. Please try again.');
+  }
+  btn.disabled = false;
+}
+
+function sendSuggestion(msg) {
+  document.getElementById('chat-input-dash').value = msg;
+  sendMessage();
+}
+
+function sendSuggestionAI(msg) {
+  document.getElementById('chat-input-ai').value = msg;
+  sendMessageAI();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+function handleKeyAI(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessageAI(); }
+}
+
+// Close modals on backdrop click & live listeners — deferred until DOM ready
+function attachListeners() {
+  // Drag-safe backdrop dismiss — only close if mousedown AND mouseup both on backdrop.
+  // This prevents dragging text inside a modal from accidentally closing it.
+  let mousedownTarget = null;
+  document.addEventListener('mousedown', e => { mousedownTarget = e.target; });
+
+  const backdropPairs = [
+    { id: 'add-modal',     close: closeModal },
+    { id: 'detail-modal',  close: closeDetailModal },
+    { id: 'renew-modal',   close: closeRenewModal },
+    { id: 'profile-modal', close: closeProfileModal },
+    { id: 'backup-modal',  close: closeBackupModal },
+    { id: 'restore-modal', close: closeRestoreModal },
+  ];
+  backdropPairs.forEach(({ id, close }) => {
+    document.getElementById(id).addEventListener('click', e => {
+      if (e.target === e.currentTarget && mousedownTarget === e.currentTarget) {
+        close();
+      }
+    });
+  });
+
+  document.getElementById('f-premium').addEventListener('input', updateAnnualisedDisplay);
+  document.getElementById('f-frequency').addEventListener('change', updateAnnualisedDisplay);
+
+  // Drag and drop for renew upload zone
+  const renewZone = document.getElementById('renew-upload-zone');
+  renewZone.addEventListener('dragover', e => { e.preventDefault(); renewZone.classList.add('drag-over'); });
+  renewZone.addEventListener('dragleave', () => renewZone.classList.remove('drag-over'));
+  renewZone.addEventListener('drop', e => {
+    e.preventDefault(); renewZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) handleRenewFileSelect({ target: { files: [file] } });
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', attachListeners);
+} else {
+  attachListeners();
+}
+
+// ─── Renew Modal ──────────────────────────────────────────────────────────────
+let renewDocBase64 = null;
+let renewDocName = null;
+let renewDocSize = null;
+let currentRenewTab = 'quick';
+
+function openRenewModal(id) {
+  const p = policies.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('renew-id').value = id;
+
+  // Populate policy pill
+  const color = TYPE_COLORS[p.type] || 'var(--gold)';
+  document.getElementById('renew-policy-pill').innerHTML = `
+    <strong>${p.name}</strong>
+    <span>${TYPE_ICONS[p.type] || ''} ${p.type} · ${p.provider} · Currently expires ${formatDate(p.renewal)}</span>
+  `;
+
+  // Reset fields
+  document.getElementById('renew-date').value = '';
+  document.getElementById('renew-premium').value = '';
+  document.getElementById('renew-notes').value = '';
+  document.getElementById('renew-date-upload').value = '';
+  document.getElementById('renew-premium-upload').value = '';
+  document.getElementById('renew-notes-upload').value = '';
+  resetRenewUpload();
+  switchRenewTab('quick');
+
+  document.getElementById('renew-modal').classList.remove('hidden');
+}
+
+function closeRenewModal() {
+  document.getElementById('renew-modal').classList.add('hidden');
+  renewDocBase64 = null; renewDocName = null; renewDocSize = null;
+}
+
+function switchRenewTab(tab) {
+  currentRenewTab = tab;
+  document.getElementById('tab-quick').classList.toggle('active', tab === 'quick');
+  document.getElementById('tab-upload').classList.toggle('active', tab === 'upload');
+  document.getElementById('renew-panel-quick').style.display = tab === 'quick' ? 'block' : 'none';
+  document.getElementById('renew-panel-upload').style.display = tab === 'upload' ? 'block' : 'none';
+}
+
+function resetRenewUpload() {
+  renewDocBase64 = null; renewDocName = null; renewDocSize = null;
+  document.getElementById('renew-upload-zone').style.display = 'block';
+  document.getElementById('renew-file-pill').style.display = 'none';
+  document.getElementById('renew-extract-banner').style.display = 'none';
+  document.getElementById('renew-extraction-progress').style.display = 'none';
+  document.getElementById('renew-extracted-fields').style.display = 'none';
+  document.getElementById('renew-file-input').value = '';
+  ['date','premium','notes'].forEach(f => {
+    const b = document.getElementById(`renew-badge-${f}`);
+    if (b) b.style.display = 'none';
+  });
+}
+
+function removeRenewFile() { resetRenewUpload(); }
+
+function handleRenewFileSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  renewDocName = file.name;
+  renewDocSize = formatBytes(file.size);
+  const reader = new FileReader();
+  reader.onload = e => {
+    renewDocBase64 = e.target.result.split(',')[1];
+    document.getElementById('renew-upload-zone').style.display = 'none';
+    document.getElementById('renew-file-pill').style.display = 'flex';
+    document.getElementById('renew-file-name').textContent = renewDocName;
+    document.getElementById('renew-file-size').textContent = renewDocSize;
+    document.getElementById('renew-extract-banner').style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function extractRenewal() {
+  if (!renewDocBase64) return;
+  const id = document.getElementById('renew-id').value;
+  const p = policies.find(x => x.id === id);
+  if (!p) return;
+
+  document.getElementById('renew-extract-btn').disabled = true;
+  document.getElementById('renew-extract-banner').style.display = 'none';
+  document.getElementById('renew-extraction-progress').style.display = 'flex';
+
+  const prompt = `You are reading an insurance renewal notice. The existing policy details are:
+Policy Name: ${p.name}
+Provider: ${p.provider}
+Policy Number: ${p.number || 'N/A'}
+Current Expiry: ${p.renewal || 'N/A'}
+
+Extract ONLY the renewal-specific information from this document and return it as a JSON object with no explanation or markdown:
+{
+  "renewal_date": "New expiry/renewal date in YYYY-MM-DD format, or null if not found",
+  "premium": "New premium amount as a number only, or null if unchanged/not stated",
+  "coverage_changes": "A brief description of any changes to coverage, exclusions, or terms compared to before. If none are mentioned, return null."
+}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 500,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: renewDocBase64 } },
+            { type: 'text', text: prompt }
+          ]
+        }]
+      })
+    });
+    const data = await resp.json();
+    const raw = data.content?.[0]?.text || '';
+    const extracted = JSON.parse(raw.replace(/```json|```/g, '').trim());
+
+    document.getElementById('renew-extraction-progress').style.display = 'none';
+    document.getElementById('renew-extracted-fields').style.display = 'block';
+
+    if (extracted.renewal_date) {
+      document.getElementById('renew-date-upload').value = extracted.renewal_date;
+      document.getElementById('renew-badge-date').style.display = 'inline-flex';
+    }
+    if (extracted.premium) {
+      document.getElementById('renew-premium-upload').value = extracted.premium;
+      document.getElementById('renew-badge-premium').style.display = 'inline-flex';
+    }
+    if (extracted.coverage_changes) {
+      document.getElementById('renew-notes-upload').value = extracted.coverage_changes;
+      document.getElementById('renew-badge-notes').style.display = 'inline-flex';
+    }
+    document.getElementById('renew-extract-btn').disabled = false;
+
+  } catch(err) {
+    document.getElementById('renew-extraction-progress').style.display = 'none';
+    document.getElementById('renew-extract-banner').style.display = 'flex';
+    document.getElementById('renew-extracted-fields').style.display = 'block';
+    document.getElementById('renew-extract-btn').disabled = false;
+    alert('Could not extract from the document. Please fill in the fields manually below.');
+  }
+}
+
+async function saveRenewal() {
+  const id = document.getElementById('renew-id').value;
+  const p = policies.find(x => x.id === id);
+  if (!p) return;
+
+  const isUpload = currentRenewTab === 'upload';
+  const newDate    = isUpload ? document.getElementById('renew-date-upload').value   : document.getElementById('renew-date').value;
+  const newPremium = isUpload ? document.getElementById('renew-premium-upload').value : document.getElementById('renew-premium').value;
+  const newNotes   = isUpload ? document.getElementById('renew-notes-upload').value   : document.getElementById('renew-notes').value;
+
+  if (!newDate) {
+    alert('Please enter the new expiry date.');
+    return;
+  }
+
+  if (newDate) p.renewal = newDate;
+  if (newPremium) p.premium = newPremium;
+  if (newNotes) {
+    p.notes = p.notes
+      ? `${p.notes}\n\n— Renewal update (${formatDate(newDate)}): ${newNotes}`
+      : `Renewal update (${formatDate(newDate)}): ${newNotes}`;
+  }
+
+  // Store renewal notice doc in IndexedDB if uploaded
+  if (renewDocBase64) {
+    const renewalDate = new Date().toLocaleDateString('en-SG', {day:'numeric',month:'short',year:'numeric'});
+    await saveDocument(id, 'renewal', renewDocBase64, 'application/pdf', renewDocName, renewDocSize, renewalDate);
+    p.renewalDocName = renewDocName;
+    p.renewalDocSize = renewDocSize;
+    p.renewalDocDate = renewalDate;
+  }
+
+  await savePolicies();
+  updateUI();
+  closeRenewModal();
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+let toastTimer = null;
+function showToast(msg, isError = false) {
+  const el = document.getElementById('app-toast');
+  el.textContent = msg;
+  el.classList.toggle('error', isError);
+  el.classList.add('visible');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('visible'), 3500);
+}
+
+// ─── Profile Modal ────────────────────────────────────────────────────────────
+function openProfileModal() {
+  if (!currentUser) return;
+
+  // Avatar
+  const name = currentUser.name || 'Me';
+  const initials = name.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0,2) || '👤';
+  document.getElementById('profile-avatar-large').textContent = initials;
+
+  // Info
+  document.getElementById('profile-email-display').textContent = 'Stored locally on this device';
+  document.getElementById('profile-policy-count').textContent = policies.length;
+
+  // Name field
+  document.getElementById('profile-name').value = name;
+
+  // PIN fields
+  document.getElementById('profile-new-pin').value = '';
+  document.getElementById('profile-confirm-pin').value = '';
+  const hasPIN = !!getPINHash();
+  document.getElementById('pin-status-text').textContent = hasPIN
+    ? 'A PIN is set. Enter a new PIN below to change it, or click Remove PIN.'
+    : 'No PIN set — your vault opens instantly. Set a PIN to protect it on shared devices.';
+  document.getElementById('remove-pin-btn').style.display = hasPIN ? 'inline-flex' : 'none';
+
+  // Clear error
+  const errEl = document.getElementById('profile-error');
+  errEl.style.display = 'none'; errEl.textContent = '';
+
+  document.getElementById('profile-modal').classList.remove('hidden');
+}
+
+function closeProfileModal() {
+  document.getElementById('profile-modal').classList.add('hidden');
+}
+
+function removePIN() {
+  if (!confirm('Remove your PIN? The vault will open instantly next time.')) return;
+  removePINHash();
+  showToast('✅ PIN removed.');
+  openProfileModal(); // refresh status
+}
+
+function saveProfile() {
+  const newName = document.getElementById('profile-name').value.trim();
+  const newPIN  = document.getElementById('profile-new-pin').value.trim();
+  const confPIN = document.getElementById('profile-confirm-pin').value.trim();
+
+  const showErr = msg => {
+    const el = document.getElementById('profile-error');
+    el.textContent = msg; el.style.display = 'block';
+  };
+
+  if (!newName) { showErr('Name cannot be empty.'); return; }
+
+  // Validate PIN if provided
+  let settingPIN = false;
+  if (newPIN || confPIN) {
+    if (!/^\d{4}$/.test(newPIN)) { showErr('PIN must be exactly 4 digits.'); return; }
+    if (newPIN !== confPIN) { showErr('PINs do not match.'); return; }
+    settingPIN = true;
+  }
+
+  // Save name
+  saveDisplayName(newName);
+  currentUser.name = newName;
+  updateHeaderUser();
+  document.getElementById('profile-avatar-large').textContent =
+    newName.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0,2) || '👤';
+
+  // Save PIN if provided
+  if (settingPIN) savePINHash(pinHash(newPIN));
+
+  // Flash button then close
+  const saveBtn = document.querySelector('#profile-modal .btn-gold');
+  const orig = saveBtn.textContent;
+  saveBtn.textContent = '✓ Saved';
+  saveBtn.classList.add('btn-confirm');
+  setTimeout(() => {
+    saveBtn.textContent = orig;
+    saveBtn.classList.remove('btn-confirm');
+    closeProfileModal();
+    showToast(settingPIN ? '✅ Name and PIN updated.' : '✅ Profile updated.');
+  }, 420);
+}
+
+async function confirmDeleteAccount() {
+  const confirmed = confirm('Delete all your data? This will permanently remove all saved policies and documents and cannot be undone.');
+  if (!confirmed) return;
+  const doubleConfirm = confirm('Last chance — all policy data will be deleted. Continue?');
+  if (!doubleConfirm) return;
+
+  // Delete all documents from IndexedDB
+  for (const p of policies) { await deleteDocuments(p.id); }
+  try { await idbDelete('policies', getUserPrefix()); } catch(e) {}
+
+  // Clear PIN and name
+  removePINHash();
+  localStorage.removeItem(NAME_KEY);
+
+  policies = [];
+  currentUser = null;
+  closeProfileModal();
+  document.getElementById('main-app').style.display = 'none';
+  // Go straight back to app with fresh state (no PIN, no data)
+  enterApp();
+}
+
+// ─── Export / Import Vault ────────────────────────────────────────────────────
+function openBackupModal() {
+  const count = policies.length;
+  document.getElementById('backup-policy-count').textContent =
+    count === 0 ? 'No policies saved yet' : `${count} polic${count === 1 ? 'y' : 'ies'} will be included`;
+  document.getElementById('backup-modal').classList.remove('hidden');
+}
+function closeBackupModal() {
+  document.getElementById('backup-modal').classList.add('hidden');
+}
+
+function openRestoreModal() {
+  document.getElementById('restore-modal').classList.remove('hidden');
+}
+function closeRestoreModal() {
+  document.getElementById('restore-modal').classList.add('hidden');
+}
+
+async function doExportVault() {
+  closeBackupModal();
+  await exportVault();
+}
+
+async function exportVault() {
+  if (policies.length === 0) {
+    showToast('No policies to export.', true); return;
+  }
+
+  // Build export bundle — policies metadata + all documents
+  const bundle = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    exportedBy: currentUser ? currentUser.email : 'guest',
+    policies: policies.map(policyMetadata),
+    documents: []
+  };
+
+  for (const p of policies) {
+    const doc = await loadDocument(p.id, 'policy');
+    if (doc) bundle.documents.push({ policyId: p.id, type: 'policy', base64: doc.base64, mime: doc.mime, name: doc.name, size: doc.size, date: doc.date });
+    const renewal = await loadDocument(p.id, 'renewal');
+    if (renewal) bundle.documents.push({ policyId: p.id, type: 'renewal', base64: renewal.base64, name: renewal.name, size: renewal.size, date: renewal.date });
+  }
+
+  const json = JSON.stringify(bundle, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `PolicyVault_Export_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`✅ Exported ${policies.length} polic${policies.length === 1 ? 'y' : 'ies'} successfully.`);
+}
+
+async function importVault(event) {
+  closeRestoreModal();
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = '';
+
+  let bundle;
+  try {
+    const text = await file.text();
+    bundle = JSON.parse(text);
+  } catch(e) {
+    showToast('Could not read file — make sure it\'s a valid PolicyVault export.', true); return;
+  }
+
+  if (!bundle.version || !Array.isArray(bundle.policies)) {
+    showToast('Invalid export file format.', true); return;
+  }
+
+  const confirmed = confirm(
+    `This will import ${bundle.policies.length} polic${bundle.policies.length === 1 ? 'y' : 'ies'} from the export file.\n\nExisting policies with the same ID will be overwritten. Continue?`
+  );
+  if (!confirmed) return;
+
+  // Merge policies — existing ones not in import are kept
+  for (const imported of bundle.policies) {
+    const idx = policies.findIndex(p => p.id === imported.id);
+    if (idx >= 0) policies[idx] = imported;
+    else policies.push(imported);
+  }
+
+  // Restore documents
+  if (Array.isArray(bundle.documents)) {
+    for (const doc of bundle.documents) {
+      if (doc.base64) {
+        await saveDocument(doc.policyId, doc.type, doc.base64, doc.mime || 'application/pdf', doc.name, doc.size, doc.date);
+      }
+    }
+  }
+
+  await savePolicies();
+  updateUI();
+  showToast(`✅ Imported ${bundle.policies.length} polic${bundle.policies.length === 1 ? 'y' : 'ies'} successfully.`);
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+initAuth();
+</script>
+
+<!-- Profile Modal -->
+<div class="modal-backdrop hidden" id="profile-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <div class="modal-title">My Profile</div>
+      <button class="modal-close" onclick="closeProfileModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Avatar -->
+      <div class="profile-avatar-large" id="profile-avatar-large">?</div>
+
+      <!-- Read-only account info -->
+      <div class="profile-meta">
+        <div class="profile-meta-row">
+          <span class="profile-meta-label">Storage</span>
+          <span class="profile-meta-value" id="profile-email-display">Local device only</span>
+        </div>
+        <div class="profile-meta-row">
+          <span class="profile-meta-label">Policies saved</span>
+          <span class="profile-meta-value" id="profile-policy-count">0</span>
+        </div>
+      </div>
+
+      <div class="profile-error" id="profile-error"></div>
+
+      <!-- Change password -->
+      <div class="profile-section-divider">PIN Lock</div>
+      <div style="font-size:13px; color:var(--cream-dim); margin-bottom:14px; line-height:1.6" id="pin-status-text">No PIN set — your vault opens instantly. Set a PIN to protect it on shared devices.</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">New PIN <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">(4 digits)</span></label>
+          <input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" class="form-input" id="profile-new-pin" placeholder="••••">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm PIN</label>
+          <input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" class="form-input" id="profile-confirm-pin" placeholder="••••">
+        </div>
+      </div>
+      <div style="margin-bottom:18px">
+        <button class="btn btn-ghost" onclick="removePIN()" id="remove-pin-btn" style="font-size:13px; padding:7px 14px">Remove PIN</button>
+      </div>
+
+      <!-- Change name -->
+      <div class="profile-section-divider">Display Name</div>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-input" id="profile-name" placeholder="Your full name">
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost danger" onclick="confirmDeleteAccount()" style="margin-right:auto">🗑 Delete Account</button>
+      <button class="btn btn-ghost" onclick="closeProfileModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+</div>
+<!-- Toast -->
+<div class="toast" id="app-toast"></div>
+<!-- Backup Modal -->
+<div class="modal-backdrop hidden" id="backup-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <div class="modal-title">Back up your data</div>
+      <button class="modal-close" onclick="closeBackupModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center; padding: 8px 0 24px">
+        <div style="font-size:48px; margin-bottom:12px">📦</div>
+        <div style="font-family:'Lora',serif; font-size:18px; font-weight:600; color:var(--cream); margin-bottom:8px">Download a copy of your vault</div>
+        <div style="font-size:14px; color:var(--cream-dim); line-height:1.7; max-width:340px; margin:0 auto">Your policies and uploaded documents will be saved as a single file on your device. Keep it somewhere safe — you can use it to restore your data on any browser or device.</div>
+      </div>
+
+      <div style="background:var(--navy); border:1px solid var(--navy-border); border-radius:12px; padding:16px 18px; margin-bottom:8px">
+        <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--cream-dim); margin-bottom:12px">What's included</div>
+        <div style="display:flex; flex-direction:column; gap:10px">
+          <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--cream)">
+            <span style="color:var(--gold)">✓</span> All your policy details and notes
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--cream)">
+            <span style="color:var(--gold)">✓</span> Uploaded policy documents and renewal notices
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--cream)">
+            <span style="color:var(--gold)">✓</span> Coverage notes and renewal history
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(45,106,79,0.06); border:1px solid rgba(45,106,79,0.18); border-radius:10px; padding:12px 16px; display:flex; gap:10px; align-items:flex-start">
+        <span style="font-size:16px; flex-shrink:0; margin-top:1px">🔒</span>
+        <div style="font-size:12px; color:var(--cream-dim); line-height:1.6">Your data is saved locally on your device only and is never sent to any server. We recommend storing your backup file in an encrypted folder or password-protected drive.</div>
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between">
+      <div style="font-size:12px; color:var(--cream-dim)" id="backup-policy-count"></div>
+      <div style="display:flex; gap:10px">
+        <button class="btn btn-ghost" onclick="closeBackupModal()">Cancel</button>
+        <button class="btn btn-gold" onclick="doExportVault()">📤 Download backup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Restore Modal -->
+<div class="modal-backdrop hidden" id="restore-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <div class="modal-title">Restore from backup</div>
+      <button class="modal-close" onclick="closeRestoreModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center; padding: 8px 0 24px">
+        <div style="font-size:48px; margin-bottom:12px">📂</div>
+        <div style="font-family:'Lora',serif; font-size:18px; font-weight:600; color:var(--cream); margin-bottom:8px">Restore your policies from a file</div>
+        <div style="font-size:14px; color:var(--cream-dim); line-height:1.7; max-width:340px; margin:0 auto">Select a backup file you previously downloaded from PolicyVault. Your policies and documents will be restored exactly as they were.</div>
+      </div>
+
+      <div style="background:var(--navy); border:1px solid var(--navy-border); border-radius:12px; padding:16px 18px; margin-bottom:8px">
+        <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--cream-dim); margin-bottom:12px">How it works</div>
+        <div style="display:flex; flex-direction:column; gap:10px">
+          <div style="display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--cream)">
+            <span style="background:var(--gold);color:white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px">1</span>
+            Select your backup file (ends in <span style="font-family:'DM Mono',monospace; font-size:12px; background:var(--navy-light); padding:1px 5px; border-radius:4px">.json</span>)
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--cream)">
+            <span style="background:var(--gold);color:white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px">2</span>
+            PolicyVault reads the file and restores your policies and documents
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--cream)">
+            <span style="background:var(--gold);color:white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px">3</span>
+            Existing policies are kept — only new or updated ones are added
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(192,57,43,0.06); border:1px solid rgba(192,57,43,0.18); border-radius:10px; padding:12px 16px; display:flex; gap:10px; align-items:flex-start">
+        <span style="font-size:16px; flex-shrink:0; margin-top:1px">⚠️</span>
+        <div style="font-size:12px; color:var(--cream-dim); line-height:1.6">Only use backup files downloaded from PolicyVault. Files from other sources may not work correctly. If a policy in the backup has the same ID as an existing one, it will be overwritten.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeRestoreModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="document.getElementById('import-file-input').click()">📂 Choose backup file</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
